@@ -1,0 +1,29 @@
+--Make virtual environment--
+Windows:
+> py -m venv <name of virtual environment>
+
+Mac:
+$
+
+--Activate virtual environment--
+Windows:
+> .venv\Scripts\activate
+
+Mac:
+$
+
+
+--Deactivate virtual environment--
+Windows:
+> .venv\Scripts\deactivate
+
+Mac:
+$
+
+
+--Run python--
+Windows:
+> .venv\Scripts\python.exe main.py
+
+Mac:
+$

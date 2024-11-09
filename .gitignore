@@ -1,0 +1,6 @@
+#keep private notes and stuff out of repo
+private/
+
+__pycache__/
+
+.venv/

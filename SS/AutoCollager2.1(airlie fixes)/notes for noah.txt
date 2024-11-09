@@ -1,0 +1,35 @@
+--Make virtual environment--
+Windows:
+> py -m venv <name of virtual environment>
+
+Mac:
+$ python3 -m vena .venv
+
+--Activate virtual environment--
+Windows:
+> .venv\Scripts\activate
+
+Mac:
+$ source .venv/bin/activate
+
+
+--Deactivate virtual environment--
+Windows:
+> .venv\Scripts\deactivate
+
+Mac:
+$
+
+
+--Run python--
+Windows:
+> .venv\Scripts\python.exe main.py
+
+Mac:
+$
+
+
+
+--Extra notes--
+Mac:
+On George, installing pillow_heif package raise error, "the 'xcrun' command requires command line developer tools..." Need to install Xcode
