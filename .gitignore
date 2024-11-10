@@ -4,3 +4,5 @@ private/
 __pycache__/
 
 .venv/
+.win_venv/
+.mac_venv/

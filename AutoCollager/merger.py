@@ -1,6 +1,8 @@
 from PIL import Image, ImageDraw
 import math
 import os
+from pathlib import Path
+
 
 """
 Notes:
@@ -33,7 +35,7 @@ class Merger:
     def getLargestDimension(self, img_obj_list, dimIsWidth=True):
         max_dim = 0
         for Img in img_obj_list:
-            dimension = Img.size[!dimIsWidth]
+            dimension = Img.size[not dimIsWidth]
             if dimension > max_dim:
                 max_dim = dimension
         return max_dim
@@ -49,8 +51,8 @@ class Merger:
             if end_index > num_images:
                 end_index = num_images
 
-            curr_row = img_list[start_index:end_index]
-            row_heights.append(getLargestDimension(curr_row, False))
+            curr_row = img_obj_list[start_index:end_index]
+            row_heights.append(self.getLargestDimension(curr_row, False))
 
         return row_heights
 
@@ -71,8 +73,8 @@ class Merger:
     def scaleImagesToWidth(self, img_obj_list, new_width):
         new_img_obj_list = []
         for Img in img_obj_list:          
-            new_img_list.append(self.scaleImageToWidth(Img, new_width))
-        return new_img_list
+            new_img_obj_list.append(self.scaleImageToWidth(Img, new_width))
+        return new_img_obj_list
 
 
     def scaleImageToHeight(self, Img, new_height):
@@ -109,7 +111,7 @@ class Merger:
                 if (rows * cols) != num_images: # left overs go to a new row
                     rows += 1
                     
-        print(f"\tlayout: ({num_rows}, {num_cols})")
+        print(f"\tlayout: ({rows}, {cols})")
         return (rows, cols)
 
 
@@ -127,7 +129,7 @@ class Merger:
             print(f"\tmax_img_width: {max_img_width}, total_width: {total_width}")
 
             if total_width > self.final_size[0]: #solve for appriorate width
-                max_img_width = (self.final_size[0] - ((num_cols-1) * border_thickness) - (2 * outer_border_thickness)) / num_cols
+                max_img_width = int((self.final_size[0] - ((num_cols-1) * border_thickness) - (2 * outer_border_thickness)) / num_cols)
                 total_width = self._calcWidth(num_cols, max_img_width, border_thickness, outer_border_thickness)
                 
                 print(f"\tTotal width too large, so recalc's are max_img_width: {max_img_width}, total_width: {total_width}")
@@ -185,7 +187,7 @@ class Merger:
         
         y_pos = outer_border_thickness
         for row in range(num_rows):
-            y_pos += (row > 0) * (row_heights[row-1] + self.border_thickness)
+            y_pos += (row > 0) * (row_heights[row-1] + border_thickness)
             for col in range(num_cols):
                 i = row * num_cols + col
                 x_pos = col * (max_img_width + border_thickness) + outer_border_thickness

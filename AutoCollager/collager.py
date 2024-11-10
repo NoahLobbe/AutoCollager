@@ -7,6 +7,7 @@ from datetime import datetime
 import os
 from pathlib import Path
 import subprocess
+import platform
 
 
 BORDER_COLORS_DICT = {
@@ -32,6 +33,9 @@ class Collager:
         self.BORDER_THICKNESS_RANGE = [0,50]
         
         self.outerBorderOn_BoolVar = tk.BooleanVar(value=True)
+
+        self.makeWidgets()
+        self.packWidgets()
 
 
     def centreWindow(self):
@@ -99,11 +103,6 @@ class Collager:
             )
 
 
-        #other
-        self.AuthorLabel = tk.Label(text="Noah Lobbe 2024", font=("TkDefaultFont", 7))
-        
-
-
     def packWidgets(self):
         self.Root.grid_columnconfigure((0, 1, 2, 3), weight=1)
         
@@ -126,17 +125,6 @@ class Collager:
         self.BorderOuterCheckbutton.grid(row=7, column=2, sticky="W")
 
         self.Root.update()
-        print("Window height after widgets:", self.Root.winfo_height())
-
-        offset = 14
-        new_height = self.Root.winfo_height() + offset
-        width = self.Root.winfo_width()
-        self.Root.geometry(f"{width}x{new_height}")
-        self.Root.update()
-        
-        print("Window height adjusted for author label:", self.Root.winfo_height())
-        self.AuthorLabel.place(x=0, y=self.Root.winfo_height() - offset)
-
         self.centreWindow()
         self.Root.deiconify()
 
@@ -145,15 +133,18 @@ class Collager:
         option_menu_value = self.BordercolorCombobox.get()
         self.border_color = BORDER_COLORS_DICT[option_menu_value]
         print("updated border color,", self.border_color)
+        return self.border_color
 
     def updateBorderThickness(self):
         option_menu_value = self.BorderthicknessSpinBox.get()
         self.border_thickness = int(option_menu_value)
         print("updated border thickness,", self.border_thickness)
+        return self.border_thickness
 
     def updateBorderOutside(self):
         self.outer_border_on = self.outerBorderOn_BoolVar.get()
         print("updated border along outside,", self.outer_border_on)
+        return self.outer_border_on
 
     def getFilepath(self):
         return str(os.path.join(Path.home(), "Downloads"))
@@ -163,8 +154,10 @@ class Collager:
         print("passed params:", image_files_list, dragged_dropped)
 
         #update varaibels
-        self.updateBorderColor()
-        self.updateBorderThickness()
+        color = self.updateBorderColor()
+        border_thickness = self.updateBorderThickness()
+        is_border = self.updateBorderOutside()
+        outer_border_thickness = is_border *  border_thickness
 
         #get images
         if (image_files_list == None) and not dragged_dropped:
@@ -181,11 +174,16 @@ class Collager:
             filepath = self.getFilepath()
             filename = filepath +  "/" + datetime.today().strftime('%Y-%m-%d %I.%M.%S%p') + " merged.png"
             print("filename:", filename)
-            self.Merger.mergeImages(img_obj_list, filename)
+
+            self.Merger.mergeImages(img_obj_list, filename, color, border_thickness, outer_border_thickness)
 
             self.Merger.closeImages(img_obj_list)
-            
-            subprocess.run(["/usr/bin/open","Downloads/"])
+
+            if platform.system() == "Darwin":
+                subprocess.run(["/usr/bin/open","Downloads/"])
+            elif platform.system() == "Windows":
+                os.startfile(filename)
+                
         else:
             print("no images selected/cancelled")
 
@@ -204,4 +202,5 @@ class Collager:
 
 
     def run(self):
+        
         self.Root.mainloop()
