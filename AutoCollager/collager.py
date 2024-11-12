@@ -23,7 +23,7 @@ class Collager:
     def __init__(self, title, version_str):
 
         self.Root = tkDnD2.Tk()
-        self.Root.title(version_str + " - " + title)
+        self.Root.title(title + " " + version_str)
         self.Root.resizable(False, False)
         self.Root.withdraw() # so that adjustments can be made subtley
 
@@ -31,11 +31,20 @@ class Collager:
 
         #variables
         self.BORDER_THICKNESS_RANGE = [0,50]
+        self.FILE_FORMAT= ".png"
+        self.filename = datetime.today().strftime('%Y-%m-%d %I.%M.%S%p') + " merged"
+        self.save_directory = str(os.path.join(Path.home(), "Downloads"))
         
         self.outerBorderOn_BoolVar = tk.BooleanVar(value=True)
+        self.filename_StrVar = tk.StringVar(value = self.filename)
+        self.saveDir_StrVar = tk.StringVar(value = self.save_directory)
+
+        
+        
 
         self.makeWidgets()
         self.packWidgets()
+        #self.updateFilename()
 
 
     def centreWindow(self):
@@ -73,6 +82,14 @@ class Collager:
         self.OptionsLabel = tk.Label(text="Customisation",
                                      font=("TkDefaultFont", 14)
                                      )
+        
+        self.filenameLabel = tk.Label(text="Image name: ")
+        self.filenameEntry = tk.Entry(textvariable=self.filename_StrVar)
+        self.filenameEntry.bind("<Button-1>", self.updateFilename)
+
+        self.SaveDirLabel = tk.Label(text="Save to: ")
+        self.SaveDirEntry = tk.Entry(textvariable=self.saveDir_StrVar)
+        self.SaveDirDialogButton = tk.Button(text="...", command=self.updateSaveDirDialog)
 
         self.BorderthicknessLabel = tk.Label(text="Border thickness: ")        
         self.BorderthicknessSpinBox = ttk.Spinbox(
@@ -104,25 +121,31 @@ class Collager:
 
 
     def packWidgets(self):
-        self.Root.grid_columnconfigure((0, 1, 2, 3), weight=1)
+        self.Root.grid_columnconfigure((0, 1, 2, 3, 4), weight=1)
         
-        self.TitleLabel.grid(row=0, column=1, columnspan=2)
-        self.DescriptorLabel.grid(row=1, column=1, columnspan=2)
-        self.RunButton.grid(pady=5, row=2, column=1, columnspan=2, sticky="NSEW")
+        self.TitleLabel.grid(row=0, column=1, columnspan=3)
+        self.DescriptorLabel.grid(row=1, column=1, columnspan=3)
+        self.RunButton.grid(pady=5, row=2, column=1, columnspan=3, sticky="NSEW")
 
         
-        self.OptionsSeparator.grid(pady=5, row=4, column=0, columnspan=4, sticky="EW")
+        self.OptionsSeparator.grid(pady=5, row=3, column=0, columnspan=5, sticky="EW")
+        self.OptionsLabel.grid(pady=5, row=3, column=1, columnspan=3)
 
-        self.OptionsLabel.grid(pady=5, row=4, column=1, columnspan=2)
-        
-        self.BorderthicknessLabel.grid(pady=5, row=5, column=1, sticky="E")
-        self.BorderthicknessSpinBox.grid(row=5, column=2, sticky="W")
-        
-        self.BordercolorLabel.grid(pady=5, row=6, column=1, sticky="E")
-        self.BordercolorCombobox.grid(row=6, column=2, sticky="W")
+        self.filenameLabel.grid(pady=5, row=4, column=1, sticky="E")
+        self.filenameEntry.grid(pady=5, row=4, column=2, columnspan=2, sticky="W")
 
-        self.BorderOuterlabel.grid(pady=5, row=7, column=1, sticky="E")
-        self.BorderOuterCheckbutton.grid(row=7, column=2, sticky="W")
+        self.SaveDirLabel.grid(pady=5, row=5, column=1, sticky="E")
+        self.SaveDirEntry.grid(pady=5, row=5, column=2, sticky="EW")
+        self.SaveDirDialogButton.grid(pady=5, row=5, column=3, sticky="W")
+        
+        self.BorderthicknessLabel.grid(pady=5, row=6, column=1, sticky="E")
+        self.BorderthicknessSpinBox.grid(row=6, column=2, sticky="W")
+        
+        self.BordercolorLabel.grid(pady=5, row=7, column=1, sticky="E")
+        self.BordercolorCombobox.grid(row=7, column=2, sticky="W")
+
+        self.BorderOuterlabel.grid(pady=5, row=8, column=1, sticky="E")
+        self.BorderOuterCheckbutton.grid(row=8, column=2, sticky="W")
 
         self.Root.update()
         self.centreWindow()
@@ -145,9 +168,28 @@ class Collager:
         self.outer_border_on = self.outerBorderOn_BoolVar.get()
         print("updated border along outside,", self.outer_border_on)
         return self.outer_border_on
+    
+    def updateSaveDir(self):
+        path = self.saveDir_StrVar.get()
+        if os.path.isdir(path):
+            self.save_directory = path
+        
+    def updateSaveDirDialog(self):
+        new_dir = filedialog.askdirectory()
+        if os.path.isdir(new_dir):
+            print("updating save dir")
+            self.save_directory = os.path.normpath(new_dir)
+            self.saveDir_StrVar.set(self.save_directory)
+        else:
+            print("\tfiledialog was given empty save directory str")
 
-    def getFilepath(self):
-        return str(os.path.join(Path.home(), "Downloads"))
+
+    def updateFilename(self, event=None):
+        name = self.filename_StrVar.get()
+        if True: #later add name validation
+            self.filename = name
+            #self.filenameEntry['width'] = len(self.filename)
+            self.filenameEntry.insert(0, self.filename)
 
 
     def runCollager(self, image_files_list=None, dragged_dropped=False):
@@ -171,8 +213,9 @@ class Collager:
         
             img_obj_list = self.Merger.openImages(image_files_list)
 
-            filepath = self.getFilepath()
-            filename = filepath +  "/" + datetime.today().strftime('%Y-%m-%d %I.%M.%S%p') + " merged.png"
+            self.updateSaveDir()
+            self.updateFilename()
+            filename = self.save_directory +  "/" + self.filename + self.FILE_FORMAT
             print("filename:", filename)
 
             self.Merger.mergeImages(img_obj_list, filename, color, border_thickness, outer_border_thickness)
