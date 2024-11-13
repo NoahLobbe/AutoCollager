@@ -27,6 +27,7 @@ Version number is `x.y`, where
 - `x` is the major number, which increases when a feature is added
 - `y` is the update number, increases when a fix has been issued or it has been re-written to optimise or clean up code
 
+Current version is always `AutoCollager`, and past versions are in `SS`.
 
 ### Version 1
 very rough quick version
