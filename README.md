@@ -13,6 +13,13 @@
      - `$ source .venv/bin/activate`
      - `(.venv) path/to/directory/$ pip install requirements.txt`
 
+## Use
+### Windows
+Haven't done yet...
+
+### Mac
+Create an Automator file
+
 
 ## To Do list
 - [ ] User able to change file name of image
