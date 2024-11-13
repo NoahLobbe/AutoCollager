@@ -1,7 +1,7 @@
 # AutoCollager
 
 ## Installation
-Note: dependencies can be seen in `requirements.txt`.
+Note: dependencies can be seen in [`requirements.txt`](AutoCollager/requirements.txt).
 1. Install Python
 2. Download this package
 3. Setup virtual environment
