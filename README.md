@@ -1,6 +1,7 @@
 # AutoCollager
 
 ## Installation
+Note: dependencies can be seen in `requirements.txt`.
 1. Install Python
 2. Download this package
 3. Setup virtual environment
@@ -30,6 +31,7 @@ Create an Automator file to activate the virtual environment, run `main.py`, and
 - [ ] File input list. E.g. user can add files one by one if neccessary, which adds a widget with the file name
 - [ ] (Low priority) Figure out how to change task/tool bar icon for program. For Version 2.1 using Apple's Automator to run the program does **NOT** allow `tkinter` to change the icon
 - [ ] Make an installer
+- [ ] Make `requirements.txt`
 
 
 ## Versions
