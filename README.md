@@ -13,7 +13,7 @@
      - `$ source .venv/bin/activate`
      - `(.venv) path/to/directory/$ pip install requirements.txt`
 
-## Use
+## Useage
 ### Windows
 Haven't done yet...
 
