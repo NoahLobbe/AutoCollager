@@ -31,6 +31,7 @@ class Collager:
 
         #variables
         self.BORDER_THICKNESS_RANGE = [0,50]
+        self.DISP_TEXT_LENGTH = 100
         self.FILE_FORMAT= ".png"
         self.filename = datetime.today().strftime('%Y-%m-%d %I.%M.%S%p') + " merged"
         self.save_directory = str(os.path.join(Path.home(), "Downloads"))
@@ -39,12 +40,17 @@ class Collager:
         self.filename_StrVar = tk.StringVar(value = self.filename)
         self.saveDir_StrVar = tk.StringVar(value = self.save_directory)
 
+        self.filename_StrVar.trace_add("write", self.updateFilename)
+        self.saveDir_StrVar.trace_add("write", self.updateSaveDir)
+
+
         
         
 
         self.makeWidgets()
         self.packWidgets()
-        #self.updateFilename()
+        self.updateFilename()
+        self.updateSaveDir()
 
 
     def centreWindow(self):
@@ -85,7 +91,8 @@ class Collager:
         
         self.filenameLabel = tk.Label(text="Image name: ")
         self.filenameEntry = tk.Entry(textvariable=self.filename_StrVar)
-        self.filenameEntry.bind("<Button-1>", self.updateFilename)
+        #self.filenameEntry.bind("<Button-1>", self.updateFilename)
+        #self.filenameUpdateButton = tk.Button(text="Update", command=self.updateFilename)
 
         self.SaveDirLabel = tk.Label(text="Save to: ")
         self.SaveDirEntry = tk.Entry(textvariable=self.saveDir_StrVar)
@@ -132,7 +139,8 @@ class Collager:
         self.OptionsLabel.grid(pady=5, row=3, column=1, columnspan=3)
 
         self.filenameLabel.grid(pady=5, row=4, column=1, sticky="E")
-        self.filenameEntry.grid(pady=5, row=4, column=2, columnspan=2, sticky="W")
+        self.filenameEntry.grid(pady=5, row=4, column=2, sticky="EW")
+        #self.filenameUpdateButton.grid(pady=5, row=4, column=3, sticky="W")
 
         self.SaveDirLabel.grid(pady=5, row=5, column=1, sticky="E")
         self.SaveDirEntry.grid(pady=5, row=5, column=2, sticky="EW")
@@ -169,27 +177,39 @@ class Collager:
         print("updated border along outside,", self.outer_border_on)
         return self.outer_border_on
     
-    def updateSaveDir(self):
+    def updateSaveDir(self,*args):
+        print("args:", args)
         path = self.saveDir_StrVar.get()
+            
         if os.path.isdir(path):
             self.save_directory = path
+            self.saveDir_StrVar.set(self.save_directory)
+
+            if len(self.save_directory) < self.DISP_TEXT_LENGTH:
+                self.SaveDirEntry['width'] = len(self.save_directory)
+        print("path is now:", self.save_directory, self.saveDir_StrVar.get())
         
     def updateSaveDirDialog(self):
         new_dir = filedialog.askdirectory()
         if os.path.isdir(new_dir):
             print("updating save dir")
-            self.save_directory = os.path.normpath(new_dir)
-            self.saveDir_StrVar.set(self.save_directory)
+            self.saveDir_StrVar.set(os.path.normpath(new_dir))
+            
         else:
             print("\tfiledialog was given empty save directory str")
 
 
-    def updateFilename(self, event=None):
+    def updateFilename(self, *args):
+        print("args:", args)
         name = self.filename_StrVar.get()
         if True: #later add name validation
             self.filename = name
-            #self.filenameEntry['width'] = len(self.filename)
-            self.filenameEntry.insert(0, self.filename)
+            if len(self.filename) < self.DISP_TEXT_LENGTH:
+                print("len()", len(self.filename))
+                self.filenameEntry['width'] = len(self.filename)
+            #self.filenameEntry.insert(0, self.filename)
+
+        print("filename is now: ", self.filename)
 
 
     def runCollager(self, image_files_list=None, dragged_dropped=False):
