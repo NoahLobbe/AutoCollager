@@ -28,7 +28,11 @@ Create an Automator file to activate the virtual environment, run `main.py`, and
 - [x] Counter to adjust file name for each generation if left on default name
 - [x] Checkbox that controls whether the image is automatically opened after generation
 - [x] Make `requirements.txt`
+- [x] Put all widgets into a list so that when a widget is added all the row numbers (for packing) don't need to be changed. In fact, make the row numbers based on the objects' position in the list. All the packing (using `grid()`) info will be in a parrallel list
+- [ ] Make 2 separate `frame`s, one for the actually frequent interacting widgets, and then the second one is for the customisation/options widgets
 - [ ] Run button instead of automatically running
+- [ ] Change text for file select button to be more descriptive and list acceptable file types
+  - [ ] add file type checking so that won't try to use images that PIL can't
 - [ ] File input list. E.g. user can add files one by one if neccessary, which adds a widget with the file name
 - [ ] (Low priority) Figure out how to change task/tool bar icon for program. For Version 2.1 using Apple's Automator to run the program does **NOT** allow `tkinter` to change the icon
 - [ ] Make an installer

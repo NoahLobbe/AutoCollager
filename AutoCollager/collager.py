@@ -30,6 +30,8 @@ class Collager:
         self.Merger = Merger((1200,630), True)
 
         #variables
+        self.PADY = 5
+        self.NUM_COLS = 5
         self.BORDER_THICKNESS_RANGE = [0,50]
         self.DISP_TEXT_LENGTH = 100
         self.FILE_FORMAT= ".png"
@@ -46,7 +48,8 @@ class Collager:
         self.filename_StrVar.trace_add("write", self.updateFilename)
         self.saveDir_StrVar.trace_add("write", self.updateSaveDir)
 
-
+        self.widget_list = []
+        self.widget_packing_list = []
         
         
 
@@ -72,12 +75,22 @@ class Collager:
 
 
     def makeWidgets(self):
-        #file dialog run
+        #title
         self.TitleLabel = tk.Label(text="Auto Collager",
                                         font=("TkDefaultFont", 16)
                                    )
+        self.widget_list.append(self.TitleLabel)
+        self.widget_packing_list.append({"row":0, "col":1, "colspan":3, "sticky":""})
+
+        #descriptor text
+        """
         self.DescriptorLabel = tk.Label(text="Automatically runs once images have been selected")
-        
+
+        self.widget_list.append(self.DescriptorLabel)
+        self.widget_packing_list.append({"row":1, "col":1, "colspan":3, "sticky":""})
+        """
+
+        #run button
         self.RunButton = tk.Button(text="Click to choose images \nor \nDrag 'n' Drop \n",
                                    height=10,
                                    command=self.runCollager
@@ -85,23 +98,43 @@ class Collager:
         self.RunButton.drop_target_register(tkDnD2.DND_ALL)
         self.RunButton.dnd_bind("<<Drop>>", self.dragDropCollager)
 
+        self.widget_list.append(self.RunButton)
+        self.widget_packing_list.append({"row":2, "col":1, "colspan":self.NUM_COLS, "sticky":"NSEW"})
+
 
         #options
-        self.OptionsSeparator = ttk.Separator(self.Root, orient=tk.HORIZONTAL)
-
+        self.OptionsSeparator = ttk.Separator(self.Root, orient=tk.HORIZONTAL)   
         self.OptionsLabel = tk.Label(text="Customisation",
                                      font=("TkDefaultFont", 14)
                                      )
-        
-        self.filenameLabel = tk.Label(text="Image name: ")
-        self.filenameEntry = tk.Entry(textvariable=self.filename_StrVar)
-        #self.filenameEntry.bind("<Button-1>", self.updateFilename)
-        #self.filenameUpdateButton = tk.Button(text="Update", command=self.updateFilename)
+        self.widget_list.extend([self.OptionsSeparator,
+                                 self.OptionsLabel])
+        self.widget_packing_list.extend([{"row":3, "col":0, "colspan":self.NUM_COLS, "sticky":"EW"},
+                                         {"row":3, "col":1, "colspan":3, "sticky":""}])
 
+
+        #filename
+        self.FilenameLabel = tk.Label(text="Image name: ")
+        self.FilenameEntry = tk.Entry(textvariable=self.filename_StrVar)
+        
+        self.widget_list.extend([self.FilenameLabel,
+                                 self.FilenameEntry])
+        self.widget_packing_list.extend([{"row":4, "col":1, "colspan":1, "sticky":"E"},
+                                         {"row":4, "col":2, "colspan":1, "sticky":"W"}])
+
+        #save directory
         self.SaveDirLabel = tk.Label(text="Save to: ")
         self.SaveDirEntry = tk.Entry(textvariable=self.saveDir_StrVar)
         self.SaveDirDialogButton = tk.Button(text="...", command=self.updateSaveDirDialog)
 
+        self.widget_list.extend([self.SaveDirLabel,
+                                 self.SaveDirEntry,
+                                 self.SaveDirDialogButton])
+        self.widget_packing_list.extend([{"row":5, "col":1, "colspan":1, "sticky":"E"},
+                                         {"row":5, "col":2, "colspan":1, "sticky":"EW"},
+                                         {"row":5, "col":3, "colspan":1, "sticky":"W"}])
+        
+        #auto open file
         self.AutoOpenFilelabel = tk.Label(text="Open file once generated: ")
         self.AutoOpenFileCheckbutton = tk.Checkbutton(
             self.Root,
@@ -109,7 +142,12 @@ class Collager:
             offvalue=False,
             variable=self.autoOpenFile_BoolVar
             )
+        self.widget_list.extend([self.AutoOpenFilelabel,
+                                 self.AutoOpenFileCheckbutton])
+        self.widget_packing_list.extend([{"row":6, "col":1, "colspan":1, "sticky":"E"},
+                                         {"row":6, "col":2, "colspan":1, "sticky":"W"}])
 
+        #border thickness
         self.BorderthicknessLabel = tk.Label(text="Border thickness: ")        
         self.BorderthicknessSpinBox = ttk.Spinbox(
             self.Root,
@@ -119,7 +157,12 @@ class Collager:
             )
         self.BorderthicknessSpinBox.insert(0,10)
 
-        
+        self.widget_list.extend([self.BorderthicknessLabel,
+                                 self.BorderthicknessSpinBox])
+        self.widget_packing_list.extend([{"row":7, "col":1, "colspan":1, "sticky":"E"},
+                                         {"row":7, "col":2, "colspan":1, "sticky":"W"}])
+
+        #border color
         self.BordercolorLabel = tk.Label(text="Border color: ")
         self.BordercolorCombobox = ttk.Combobox(
             self.Root,
@@ -128,7 +171,12 @@ class Collager:
             )
         self.BordercolorCombobox.current(0)
 
+        self.widget_list.extend([self.BordercolorLabel,
+                                 self.BordercolorCombobox])
+        self.widget_packing_list.extend([{"row":8, "col":1, "colspan":1, "sticky":"E"},
+                                         {"row":8, "col":2, "colspan":1, "sticky":"W"}])
 
+        #outer border
         self.BorderOuterlabel = tk.Label(text="Border along outside: ")
         self.BorderOuterCheckbutton = tk.Checkbutton(
             self.Root,
@@ -137,10 +185,27 @@ class Collager:
             variable=self.outerBorderOn_BoolVar,
             command=self.updateBorderOutside
             )
+        
+        self.widget_list.extend([self.BorderOuterlabel,
+                                 self.BorderOuterCheckbutton])
+        self.widget_packing_list.extend([{"row":9, "col":1, "colspan":1, "sticky":"E"},
+                                         {"row":9, "col":2, "colspan":1, "sticky":"W"}])
 
 
     def packWidgets(self):
-        self.Root.grid_columnconfigure((0, 1, 2, 3, 4), weight=1)
+        self.Root.grid_columnconfigure(tk.ALL, weight=1)
+
+        # new way
+        
+        for i,widget in enumerate(self.widget_list):
+            widget.grid(
+                pady = self.PADY,
+                row = self.widget_packing_list[i]["row"],
+                column = self.widget_packing_list[i]["col"],
+                columnspan = self.widget_packing_list[i]["colspan"],
+                sticky = self.widget_packing_list[i]["sticky"]
+                )
+        """
         
         self.TitleLabel.grid(row=0, column=1, columnspan=3)
         self.DescriptorLabel.grid(row=1, column=1, columnspan=3)
@@ -152,7 +217,6 @@ class Collager:
 
         self.filenameLabel.grid(pady=5, row=4, column=1, sticky="E")
         self.filenameEntry.grid(pady=5, row=4, column=2, sticky="EW")
-        #self.filenameUpdateButton.grid(pady=5, row=4, column=3, sticky="W")
 
         self.SaveDirLabel.grid(pady=5, row=5, column=1, sticky="E")
         self.SaveDirEntry.grid(pady=5, row=5, column=2, sticky="EW")
@@ -169,6 +233,7 @@ class Collager:
 
         self.BorderOuterlabel.grid(pady=5, row=9, column=1, sticky="E")
         self.BorderOuterCheckbutton.grid(row=9, column=2, sticky="W")
+        """
 
         self.Root.update()
         self.centreWindow()
@@ -220,8 +285,7 @@ class Collager:
             self.filename = name
             if len(self.filename) < self.DISP_TEXT_LENGTH:
                 print("len()", len(self.filename))
-                self.filenameEntry['width'] = len(self.filename)
-            #self.filenameEntry.insert(0, self.filename)
+                self.FilenameEntry['width'] = len(self.filename)
 
         print("filename is now: ", self.filename)
 
