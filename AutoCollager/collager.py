@@ -41,6 +41,7 @@ class Collager:
         self.outerBorderOn_BoolVar = tk.BooleanVar(value=True)
         self.filename_StrVar = tk.StringVar(value = self.filename_default)
         self.saveDir_StrVar = tk.StringVar(value = self.save_directory)
+        self.autoOpenFile_BoolVar = tk.BooleanVar(value=True)
 
         self.filename_StrVar.trace_add("write", self.updateFilename)
         self.saveDir_StrVar.trace_add("write", self.updateSaveDir)
@@ -52,6 +53,7 @@ class Collager:
         self.makeWidgets()
         self.packWidgets()
         self.updateFilename()
+        print("updating save dir...")
         self.updateSaveDir()
 
 
@@ -100,6 +102,14 @@ class Collager:
         self.SaveDirEntry = tk.Entry(textvariable=self.saveDir_StrVar)
         self.SaveDirDialogButton = tk.Button(text="...", command=self.updateSaveDirDialog)
 
+        self.AutoOpenFilelabel = tk.Label(text="Open file once generated: ")
+        self.AutoOpenFileCheckbutton = tk.Checkbutton(
+            self.Root,
+            onvalue=True,
+            offvalue=False,
+            variable=self.autoOpenFile_BoolVar
+            )
+
         self.BorderthicknessLabel = tk.Label(text="Border thickness: ")        
         self.BorderthicknessSpinBox = ttk.Spinbox(
             self.Root,
@@ -147,15 +157,18 @@ class Collager:
         self.SaveDirLabel.grid(pady=5, row=5, column=1, sticky="E")
         self.SaveDirEntry.grid(pady=5, row=5, column=2, sticky="EW")
         self.SaveDirDialogButton.grid(pady=5, row=5, column=3, sticky="W")
-        
-        self.BorderthicknessLabel.grid(pady=5, row=6, column=1, sticky="E")
-        self.BorderthicknessSpinBox.grid(row=6, column=2, sticky="W")
-        
-        self.BordercolorLabel.grid(pady=5, row=7, column=1, sticky="E")
-        self.BordercolorCombobox.grid(row=7, column=2, sticky="W")
 
-        self.BorderOuterlabel.grid(pady=5, row=8, column=1, sticky="E")
-        self.BorderOuterCheckbutton.grid(row=8, column=2, sticky="W")
+        self.AutoOpenFilelabel.grid(pady=5, row=6, column=1, sticky="E")
+        self.AutoOpenFileCheckbutton.grid(pady=5, row=6, column=2, sticky="W")
+        
+        self.BorderthicknessLabel.grid(pady=5, row=7, column=1, sticky="E")
+        self.BorderthicknessSpinBox.grid(row=7, column=2, sticky="W")
+        
+        self.BordercolorLabel.grid(pady=5, row=8, column=1, sticky="E")
+        self.BordercolorCombobox.grid(row=8, column=2, sticky="W")
+
+        self.BorderOuterlabel.grid(pady=5, row=9, column=1, sticky="E")
+        self.BorderOuterCheckbutton.grid(row=9, column=2, sticky="W")
 
         self.Root.update()
         self.centreWindow()
@@ -185,11 +198,10 @@ class Collager:
             
         if os.path.isdir(path):
             self.save_directory = path
-            self.saveDir_StrVar.set(self.save_directory)
 
             if len(self.save_directory) < self.DISP_TEXT_LENGTH:
                 self.SaveDirEntry['width'] = len(self.save_directory)
-        print("path is now:", self.save_directory, self.saveDir_StrVar.get())
+        print(len(self.save_directory), "path is now:", self.save_directory, self.saveDir_StrVar.get())
         
     def updateSaveDirDialog(self):
         new_dir = filedialog.askdirectory()
@@ -250,10 +262,12 @@ class Collager:
 
             self.Merger.closeImages(img_obj_list)
 
-            if platform.system() == "Darwin":
-                subprocess.run(["/usr/bin/open","Downloads/"])
-            elif platform.system() == "Windows":
-                os.startfile(filename)
+            print("auto open checkbox value:", self.autoOpenFile_BoolVar.get())
+            if self.autoOpenFile_BoolVar.get():
+                if platform.system() == "Darwin":
+                    subprocess.run(["/usr/bin/open","Downloads/"])
+                elif platform.system() == "Windows":
+                    os.startfile(filename)
                 
         else:
             print("no images selected/cancelled")

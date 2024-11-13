@@ -26,7 +26,7 @@ Create an Automator file to activate the virtual environment, run `main.py`, and
 - [x] User able to change file name of image 
 - [x] User able to change file save destination 
 - [x] Counter to adjust file name for each generation if left on default name
-- [ ] Checkbox that controls whether the image is automatically opened after generation
+- [x] Checkbox that controls whether the image is automatically opened after generation
 - [ ] Run button instead of automatically running
 - [ ] File input list. E.g. user can add files one by one if neccessary, which adds a widget with the file name
 - [ ] (Low priority) Figure out how to change task/tool bar icon for program. For Version 2.1 using Apple's Automator to run the program does **NOT** allow `tkinter` to change the icon
