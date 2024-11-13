@@ -33,11 +33,13 @@ class Collager:
         self.BORDER_THICKNESS_RANGE = [0,50]
         self.DISP_TEXT_LENGTH = 100
         self.FILE_FORMAT= ".png"
-        self.filename = datetime.today().strftime('%Y-%m-%d %I.%M.%S%p') + " merged"
+        self.filename_default = datetime.today().strftime('%Y-%m-%d %I.%M.%S%p') + " merged"
+        self.filename = ""
+        self.file_count = 0
         self.save_directory = str(os.path.join(Path.home(), "Downloads"))
         
         self.outerBorderOn_BoolVar = tk.BooleanVar(value=True)
-        self.filename_StrVar = tk.StringVar(value = self.filename)
+        self.filename_StrVar = tk.StringVar(value = self.filename_default)
         self.saveDir_StrVar = tk.StringVar(value = self.save_directory)
 
         self.filename_StrVar.trace_add("write", self.updateFilename)
@@ -235,7 +237,13 @@ class Collager:
 
             self.updateSaveDir()
             self.updateFilename()
-            filename = self.save_directory +  "/" + self.filename + self.FILE_FORMAT
+
+            if ((self.filename == "") or (self.filename == self.filename_default)) and self.file_count > 0:
+                print("using default filename...")
+                self.filename = self.filename_default + f"({self.file_count})"
+                self.file_count += 1
+
+            filename = self.save_directory +  "\\" + self.filename + self.FILE_FORMAT
             print("filename:", filename)
 
             self.Merger.mergeImages(img_obj_list, filename, color, border_thickness, outer_border_thickness)

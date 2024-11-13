@@ -1,8 +1,7 @@
 #keep private notes and stuff out of repo
 private/
-
 __pycache__/
-
+.vscode/
 .venv/
 .win_venv/
 .mac_venv/

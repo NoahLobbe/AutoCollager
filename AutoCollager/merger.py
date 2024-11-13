@@ -45,13 +45,15 @@ class Merger:
         num_images = len(img_obj_list)
         row_heights = []
         for r in range(rows):
-            start_index = r * rows
+            start_index = r * cols
             end_index = (r + 1) * cols
-            
+            print(f"indices: {start_index}, {end_index}")
             if end_index > num_images:
+                print(f"end_index is larger than num_images, {num_images}")
                 end_index = num_images
 
             curr_row = img_obj_list[start_index:end_index]
+            print(f"num obj in curr row is {len(curr_row)}, curr_row: {curr_row}")
             row_heights.append(self.getLargestDimension(curr_row, False))
 
         return row_heights
@@ -109,7 +111,7 @@ class Merger:
                 cols = num_images // rows
 
                 if (rows * cols) != num_images: # left overs go to a new row
-                    rows += 1
+                    cols += 1
                     
         print(f"\tlayout: ({rows}, {cols})")
         return (rows, cols)
@@ -138,6 +140,8 @@ class Merger:
             img_obj_list = self.scaleImagesToWidth(img_obj_list, max_img_width)
             row_heights = self.getRowHeights(img_obj_list, num_rows, num_cols)
             total_height = self._calcHeight(row_heights, border_thickness, outer_border_thickness)
+
+            print(f"row heights: {row_heights}, sum of heights: {sum(row_heights)}, total_height: {total_height}")
 
         else:
             row_heights = self.getRowHeights(img_obj_list, num_rows, num_cols)
@@ -199,7 +203,7 @@ class Merger:
                     
                     print(f"\trow: {row}")
                     print(f"\tcentring offset: {centring_offset}")
-                    print(f"\tcurrent pos for image {i} of size {Img.size} is ({x_pos}, {y_pos})")
+                    print(f"\tpos for image {i} of size {Img.size} is ({x_pos}, {y_pos})")
 
                     FinalImg.paste(Img, (x_pos, y_pos))
 
