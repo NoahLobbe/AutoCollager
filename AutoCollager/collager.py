@@ -238,9 +238,9 @@ class Collager:
             self.updateSaveDir()
             self.updateFilename()
 
-            if ((self.filename == "") or (self.filename == self.filename_default)) and self.file_count > 0:
+            if (self.filename == "") or (self.filename == self.filename_default):
                 print("using default filename...")
-                self.filename = self.filename_default + f"({self.file_count})"
+                self.filename = self.filename_default + (f" ({self.file_count})" * (self.file_count > 0))
                 self.file_count += 1
 
             filename = self.save_directory +  "\\" + self.filename + self.FILE_FORMAT
