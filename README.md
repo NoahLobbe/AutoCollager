@@ -18,7 +18,7 @@
 Haven't done yet...
 
 ### Mac
-Create an Automator file
+Create an Automator file to activate the virtual environment, run `main.py`, and then deactivate the virtual environment when finished.
 
 
 ## To Do list
