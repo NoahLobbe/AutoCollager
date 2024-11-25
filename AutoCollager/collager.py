@@ -30,7 +30,7 @@ class Collager:
         self.Merger = Merger((1200,630), True)
 
         #variables
-        self.PADY = 5
+        self.PAD = 5
         self.NUM_COLS = 5
         self.BORDER_THICKNESS_RANGE = [0,50]
         self.DISP_TEXT_LENGTH = 100
@@ -50,6 +50,21 @@ class Collager:
 
         self.widget_list = []
         self.widget_packing_list = []
+
+        self.layout_list =  [
+            {
+             "frame": tk.Frame(master=self.Root),
+             "frame_grid":{"row":0, "column":0, "sticky":"EW", "padx":self.PAD},
+             "widgets": [],
+             "widgets_grid_params":[]
+             },
+            {
+             "frame": tk.Frame(master=self.Root),
+             "frame_grid":{"row":1, "column":0, "padx":self.PAD},
+             "widgets": [],
+             "widgets_grid_params":[]
+             }
+        ]
         
         
 
@@ -75,136 +90,159 @@ class Collager:
 
 
     def makeWidgets(self):
+        ##frame 1
         #title
-        self.TitleLabel = tk.Label(text="Auto Collager",
-                                        font=("TkDefaultFont", 16)
-                                   )
-        self.widget_list.append(self.TitleLabel)
-        self.widget_packing_list.append({"row":0, "col":1, "colspan":3, "sticky":""})
+        self.TitleLabel = tk.Label(
+            master=self.layout_list[0]["frame"],
+            text="Auto Collager",
+            font=("TkDefaultFont", 16)
+            )
+        self.layout_list[0]["widgets"].append(self.TitleLabel)
+        self.layout_list[0]["widgets_grid_params"].append({"row":0, "column":0, "columnspan":3, "sticky":""})
 
-        #descriptor text
-        """
-        self.DescriptorLabel = tk.Label(text="Automatically runs once images have been selected")
-
-        self.widget_list.append(self.DescriptorLabel)
-        self.widget_packing_list.append({"row":1, "col":1, "colspan":3, "sticky":""})
-        """
 
         #run button
-        self.RunButton = tk.Button(text="Click to choose images \nor \nDrag 'n' Drop \n",
-                                   height=10,
-                                   command=self.runCollager
-                                   )
+        self.RunButton = tk.Button(
+            master=self.layout_list[0]["frame"],
+            text="Click to choose images \nor \nDrag 'n' Drop \n",
+            relief=tk.GROOVE,
+            height=10,
+            command=self.runCollager
+            )
         self.RunButton.drop_target_register(tkDnD2.DND_ALL)
         self.RunButton.dnd_bind("<<Drop>>", self.dragDropCollager)
 
-        self.widget_list.append(self.RunButton)
-        self.widget_packing_list.append({"row":2, "col":1, "colspan":self.NUM_COLS, "sticky":"NSEW"})
+        self.layout_list[0]["widgets"].append(self.RunButton)
+        self.layout_list[0]["widgets_grid_params"].append({"row":1, "column":0, "sticky":"NSEW"})
 
-
+        ##frame 2
         #options
-        self.OptionsSeparator = ttk.Separator(self.Root, orient=tk.HORIZONTAL)   
-        self.OptionsLabel = tk.Label(text="Customisation",
-                                     font=("TkDefaultFont", 14)
-                                     )
-        self.widget_list.extend([self.OptionsSeparator,
-                                 self.OptionsLabel])
-        self.widget_packing_list.extend([{"row":3, "col":0, "colspan":self.NUM_COLS, "sticky":"EW"},
-                                         {"row":3, "col":1, "colspan":3, "sticky":""}])
+        self.OptionsSeparator = ttk.Separator(master=self.layout_list[1]["frame"], orient=tk.HORIZONTAL)   
+        self.OptionsLabel = tk.Label(
+            master=self.layout_list[1]["frame"],
+            text="Customisation",
+            font=("TkDefaultFont", 14)
+            )
+        self.layout_list[1]["widgets"].extend([self.OptionsSeparator, self.OptionsLabel])
+        self.layout_list[1]["widgets_grid_params"].extend(
+            [{"row":1, "column":0, "columnspan":self.NUM_COLS, "sticky":"EW"},
+             {"row":1, "column":1, "columnspan":3, "sticky":""}]
+            )
 
 
         #filename
-        self.FilenameLabel = tk.Label(text="Image name: ")
-        self.FilenameEntry = tk.Entry(textvariable=self.filename_StrVar)
+        self.FilenameLabel = tk.Label(master=self.layout_list[1]["frame"], text="Image name: ")
+        self.FilenameEntry = tk.Entry(master=self.layout_list[1]["frame"], textvariable=self.filename_StrVar)
         
-        self.widget_list.extend([self.FilenameLabel,
-                                 self.FilenameEntry])
-        self.widget_packing_list.extend([{"row":4, "col":1, "colspan":1, "sticky":"E"},
-                                         {"row":4, "col":2, "colspan":1, "sticky":"W"}])
+        self.layout_list[1]["widgets"].extend([self.FilenameLabel, self.FilenameEntry])
+        self.layout_list[1]["widgets_grid_params"].extend(
+            [{"row":4, "column":1, "columnspan":1, "sticky":"E"},
+             {"row":4, "column":2, "columnspan":1, "sticky":"W"}]
+            )
 
         #save directory
-        self.SaveDirLabel = tk.Label(text="Save to: ")
-        self.SaveDirEntry = tk.Entry(textvariable=self.saveDir_StrVar)
-        self.SaveDirDialogButton = tk.Button(text="...", command=self.updateSaveDirDialog)
+        self.SaveDirLabel = tk.Label(master=self.layout_list[1]["frame"], text="Save to: ")
+        self.SaveDirEntry = tk.Entry(master=self.layout_list[1]["frame"], textvariable=self.saveDir_StrVar)
+        self.SaveDirDialogButton = tk.Button(master=self.layout_list[1]["frame"], text="...", command=self.updateSaveDirDialog)
 
-        self.widget_list.extend([self.SaveDirLabel,
-                                 self.SaveDirEntry,
-                                 self.SaveDirDialogButton])
-        self.widget_packing_list.extend([{"row":5, "col":1, "colspan":1, "sticky":"E"},
-                                         {"row":5, "col":2, "colspan":1, "sticky":"EW"},
-                                         {"row":5, "col":3, "colspan":1, "sticky":"W"}])
+        self.layout_list[1]["widgets"].extend([self.SaveDirLabel, self.SaveDirEntry, self.SaveDirDialogButton])
+        self.layout_list[1]["widgets_grid_params"].extend(
+            [{"row":5, "column":1, "columnspan":1, "sticky":"E"},
+             {"row":5, "column":2, "columnspan":1, "sticky":"EW"},
+             {"row":5, "column":3, "columnspan":1, "sticky":"W"}]
+            )
         
         #auto open file
-        self.AutoOpenFilelabel = tk.Label(text="Open file once generated: ")
+        self.AutoOpenFilelabel = tk.Label(master=self.layout_list[1]["frame"], text="Open file once generated: ")
         self.AutoOpenFileCheckbutton = tk.Checkbutton(
-            self.Root,
+            master=self.layout_list[1]["frame"],
             onvalue=True,
             offvalue=False,
             variable=self.autoOpenFile_BoolVar
             )
-        self.widget_list.extend([self.AutoOpenFilelabel,
-                                 self.AutoOpenFileCheckbutton])
-        self.widget_packing_list.extend([{"row":6, "col":1, "colspan":1, "sticky":"E"},
-                                         {"row":6, "col":2, "colspan":1, "sticky":"W"}])
+        self.layout_list[1]["widgets"].extend([self.AutoOpenFilelabel, self.AutoOpenFileCheckbutton])
+        self.layout_list[1]["widgets_grid_params"].extend(
+            [{"row":6, "column":1, "columnspan":1, "sticky":"E"},
+             {"row":6, "column":2, "columnspan":1, "sticky":"W"}]
+            )
 
         #border thickness
-        self.BorderthicknessLabel = tk.Label(text="Border thickness: ")        
+        self.BorderthicknessLabel = tk.Label(master=self.layout_list[1]["frame"], text="Border thickness: ")        
         self.BorderthicknessSpinBox = ttk.Spinbox(
-            self.Root,
+            master=self.layout_list[1]["frame"],
             from_=self.BORDER_THICKNESS_RANGE[0],
             to=self.BORDER_THICKNESS_RANGE[1],
             width=5
             )
         self.BorderthicknessSpinBox.insert(0,10)
 
-        self.widget_list.extend([self.BorderthicknessLabel,
-                                 self.BorderthicknessSpinBox])
-        self.widget_packing_list.extend([{"row":7, "col":1, "colspan":1, "sticky":"E"},
-                                         {"row":7, "col":2, "colspan":1, "sticky":"W"}])
+        self.layout_list[1]["widgets"].extend([self.BorderthicknessLabel, self.BorderthicknessSpinBox])
+        self.layout_list[1]["widgets_grid_params"].extend(
+            [{"row":7, "column":1, "columnspan":1, "sticky":"E"},
+             {"row":7, "column":2, "columnspan":1, "sticky":"W"}]
+            )
 
         #border color
-        self.BordercolorLabel = tk.Label(text="Border color: ")
+        self.BordercolorLabel = tk.Label(master=self.layout_list[1]["frame"], text="Border color: ")
         self.BordercolorCombobox = ttk.Combobox(
-            self.Root,
+            master=self.layout_list[1]["frame"],
             width=15,
             values=BORDER_COLORS_KEYS
             )
         self.BordercolorCombobox.current(0)
 
-        self.widget_list.extend([self.BordercolorLabel,
-                                 self.BordercolorCombobox])
-        self.widget_packing_list.extend([{"row":8, "col":1, "colspan":1, "sticky":"E"},
-                                         {"row":8, "col":2, "colspan":1, "sticky":"W"}])
+        self.layout_list[1]["widgets"].extend([self.BordercolorLabel, self.BordercolorCombobox])
+        self.layout_list[1]["widgets_grid_params"].extend(
+            [{"row":8, "column":1, "columnspan":1, "sticky":"E"},
+             {"row":8, "column":2, "columnspan":1, "sticky":"W"}]
+            )
 
         #outer border
-        self.BorderOuterlabel = tk.Label(text="Border along outside: ")
+        self.BorderOuterlabel = tk.Label(master=self.layout_list[1]["frame"],text="Border along outside: ")
         self.BorderOuterCheckbutton = tk.Checkbutton(
-            self.Root,
+            master=self.layout_list[1]["frame"],
             onvalue=True,
             offvalue=False,
             variable=self.outerBorderOn_BoolVar,
             command=self.updateBorderOutside
             )
         
-        self.widget_list.extend([self.BorderOuterlabel,
-                                 self.BorderOuterCheckbutton])
-        self.widget_packing_list.extend([{"row":9, "col":1, "colspan":1, "sticky":"E"},
-                                         {"row":9, "col":2, "colspan":1, "sticky":"W"}])
+        self.layout_list[1]["widgets"].extend([self.BorderOuterlabel, self.BorderOuterCheckbutton])
+        self.layout_list[1]["widgets_grid_params"].extend(
+            [{"row":9, "column":1, "columnspan":1, "sticky":"E"},
+             {"row":9, "column":2, "columnspan":1, "sticky":"W"}]
+            )
 
 
     def packWidgets(self):
         self.Root.grid_columnconfigure(tk.ALL, weight=1)
+        self.layout_list[0]["frame"].columnconfigure(0, weight=1)
+        self.layout_list[1]["frame"].columnconfigure(tk.ALL, weight=1)
 
+        for f,frame_dic in enumerate(self.layout_list):
+            print("frame:", f)
+            frame_dic["frame"].grid(**frame_dic["frame_grid"])
+
+            for i,widget in enumerate(frame_dic["widgets"]):
+                print("\twidget:", i)
+                widget.grid(
+                    **frame_dic["widgets_grid_params"][i],
+                    pady = self.PAD
+                    )
+
+            
+
+        """
         # new way
-        
         for i,widget in enumerate(self.widget_list):
             widget.grid(
-                pady = self.PADY,
+                pady = self.PAD,
                 row = self.widget_packing_list[i]["row"],
                 column = self.widget_packing_list[i]["col"],
                 columnspan = self.widget_packing_list[i]["colspan"],
                 sticky = self.widget_packing_list[i]["sticky"]
                 )
+        """
         """
         
         self.TitleLabel.grid(row=0, column=1, columnspan=3)
