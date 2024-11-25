@@ -1,14 +1,7 @@
-from PIL import Image, ImageDraw
+from PIL import Image, ImageOps
 import math
 import os
 from pathlib import Path
-
-
-"""
-Notes:
-1) need to check EXIF data on images to check they are correct orientation.
-   E.G., on Mac this causes all the images to be rotated if taken on iPhone
-"""
 
 
 class Merger:
@@ -20,11 +13,16 @@ class Merger:
         self.final_size = final_img_size
         self.final_is_width_priority = is_width_priority
         
+        
 
-    def openImages(self, img_filename_list):
+    def openImages(self, img_filename_list, exif_fix=True):
         obj_list = []
         for img_filename in img_filename_list:
-            obj_list.append(Image.open(img_filename))
+            img = Image.open(img_filename)
+            if exif_fix:
+                img = ImageOps.exif_transpose(img) # re-orientate images according to EXIF
+            obj_list.append(img)
+
         return obj_list
 
     def closeImages(self, img_obj_list):
