@@ -49,6 +49,8 @@ class Collager:
         self.file_count = 0
         self.save_directory = str(os.path.join(Path.home(), "Downloads"))
         self.filenames_list = []
+        self.filenames_widgets_list = []
+        self.file_list_frame_parent_widget_index = None
         
         self.outerBorderOn_BoolVar = tk.BooleanVar(value=True)
         self.filename_StrVar = tk.StringVar(value = self.filename_default)
@@ -62,42 +64,60 @@ class Collager:
         self.widget_list = []
         self.widget_packing_list = []
 
-        self.layout_list =  [
-            {
+
+        """
+        ---------------------
+        |       frame       |
+        --------------------
+        |       frame       |
+        ---------------------
+        |       frame       |
+        ---------------------
+        |       frame       |
+        ---------------------
+        | frame   | frame   |
+        ---------------------
+        """
+        self.layout_dict =  {
+            "top running":{
              "frame": tk.Frame(master=self.Root),
              "frame_grid":{"row":0, "column":0, "columnspan":self.NUM_COLS, "sticky":"EW", "padx":self.PAD, "pady":self.PAD},
              "widgets": [],
              "widgets_grid_params":[]
              },
-            {
+            "file list":{
              "frame": tk.Frame(master=self.Root),
-             "frame_grid":{"row":1, "column":0, "columnspan":2, "sticky":"EW", "padx":self.PAD, "pady":self.PAD},
+             "frame_grid":{"row":1, "column":0, "columnspan":self.NUM_COLS, "sticky":"EW", "padx":self.PAD, "pady":self.PAD},
+             "widgets": [],
+             "widgets_grid_params":[]
+             },
+             "run button":{
+             "frame": tk.Frame(master=self.Root),
+             "frame_grid":{"row":2, "column":0, "columnspan":self.NUM_COLS, "sticky":"EW", "padx":self.PAD, "pady":self.PAD},
+             "widgets": [],
+             "widgets_grid_params":[]
+             },
+            "top options":{
+             "frame": tk.Frame(master=self.Root),
+             "frame_grid":{"row":3, "column":0, "columnspan":2, "sticky":"EW", "padx":self.PAD, "pady":self.PAD},
              "widgets": [],
              "widgets_grid_params":[]
              }
              ,
-            {
+            "left options":{
              "frame": tk.Frame(master=self.Root),
-             "frame_grid":{"row":2, "column":0, "sticky":"NW", "padx":self.PAD, "pady":self.PAD},
+             "frame_grid":{"row":4, "column":0, "sticky":"NW", "padx":self.PAD, "pady":self.PAD},
              "widgets": [],
              "widgets_grid_params":[]
              },
-            {
+            "right options":{
              "frame": tk.Frame(master=self.Root),
-             "frame_grid":{"row":2, "column":1, "sticky":"NE", "padx":self.PAD, "pady":self.PAD},
+             "frame_grid":{"row":4, "column":1, "sticky":"NE", "padx":self.PAD, "pady":self.PAD},
              "widgets": [],
              "widgets_grid_params":[]
              }
-        ]
-        """
-        ---------------------
-        | frame 0           |
-        ---------------------
-        | frame 1           |
-        ---------------------
-        | frame 2 | frame 3 |
-        ---------------------
-        """
+        }
+        
 
         self.makeWidgets()
         self.packWidgets()
@@ -124,17 +144,17 @@ class Collager:
         ##frame 0
         #title
         self.TitleLabel = tk.Label(
-            master=self.layout_list[0]["frame"],
+            master=self.layout_dict["top running"]["frame"],
             text="Auto Collager",
             font=("TkDefaultFont", 16)
             )
-        self.layout_list[0]["widgets"].append(self.TitleLabel)
-        self.layout_list[0]["widgets_grid_params"].append({"row":0, "column":1, "columnspan":3, "sticky":""})
+        self.layout_dict["top running"]["widgets"].append(self.TitleLabel)
+        self.layout_dict["top running"]["widgets_grid_params"].append({"row":0, "column":0, "columnspan":self.NUM_COLS, "sticky":"EW"})
 
 
         #file select button button
         self.SelectFilesButton = tk.Button(
-            master=self.layout_list[0]["frame"],
+            master=self.layout_dict["top running"]["frame"],
             text="Click to choose images \nor \nDrag 'n' Drop \n",
             relief=tk.GROOVE,
             height=10,
@@ -143,132 +163,142 @@ class Collager:
         self.SelectFilesButton.drop_target_register(tkDnD2.DND_ALL)
         self.SelectFilesButton.dnd_bind("<<Drop>>", self.dragDropFiles)
 
-        self.layout_list[0]["widgets"].append(self.SelectFilesButton)
-        self.layout_list[0]["widgets_grid_params"].append({"row":1, "column":0, "columnspan":self.NUM_COLS, "sticky":"NSEW"})
+        self.layout_dict["top running"]["widgets"].append(self.SelectFilesButton)
+        self.layout_dict["top running"]["widgets_grid_params"].append({"row":1, "column":0, "columnspan":self.NUM_COLS, "sticky":"NSEW"})
 
-        #run button
+        #filelist label
+        '''
+        self.FilesListLabel = tk.Label(
+            master=self.layout_dict["file list"]["frame"],
+            text="Files:"
+            )
+        self.layout_dict["file list"]["widgets"].append(self.FilesListLabel)
+        self.layout_dict["file list"]["widgets_grid_params"].append({"row":0, "column":0, "sticky":"EW"})
+        '''
+
+        ##run button frame
         self.RunButton = tk.Button(
-            master=self.layout_list[0]["frame"],
+            master=self.layout_dict["run button"]["frame"],
             text="Run",
             bg="light green",
             command=self.runCollager
         )
-        self.layout_list[0]["widgets"].append(self.RunButton)
-        self.layout_list[0]["widgets_grid_params"].append({"row":2, "column":2, "sticky":"EW"})
+        self.layout_dict["run button"]["widgets"].append(self.RunButton)
+        self.layout_dict["run button"]["widgets_grid_params"].append({"row":4, "column":2, "columnspan":1, "sticky":"EW"})
 
 
-        ##frame 1
+        ##frame 
         #options
-        self.OptionsSeparator = ttk.Separator(master=self.layout_list[1]["frame"], orient=tk.HORIZONTAL)   
+        self.OptionsSeparator = ttk.Separator(master=self.layout_dict["top options"]["frame"], orient=tk.HORIZONTAL)   
         self.OptionsLabel = tk.Label(
-            master=self.layout_list[1]["frame"],
+            master=self.layout_dict["top options"]["frame"],
             text="Customisation",
             font=("TkDefaultFont", 14)
             )
-        self.layout_list[1]["widgets"].extend([self.OptionsSeparator, self.OptionsLabel])
-        self.layout_list[1]["widgets_grid_params"].extend(
+        self.layout_dict["top options"]["widgets"].extend([self.OptionsSeparator, self.OptionsLabel])
+        self.layout_dict["top options"]["widgets_grid_params"].extend(
             [{"row":0, "column":0, "columnspan":self.NUM_COLS, "sticky":"EW"},
              {"row":0, "column":0, "columnspan":self.NUM_COLS}]
             )
 
 
         #filename
-        self.FilenameLabel = tk.Label(master=self.layout_list[1]["frame"], text="Image name ")
-        self.FilenameEntry = tk.Entry(master=self.layout_list[1]["frame"], textvariable=self.filename_StrVar)
+        self.FilenameLabel = tk.Label(master=self.layout_dict["top options"]["frame"], text="Image name ")
+        self.FilenameEntry = tk.Entry(master=self.layout_dict["top options"]["frame"], textvariable=self.filename_StrVar)
         
-        self.layout_list[1]["widgets"].extend([self.FilenameLabel, self.FilenameEntry])
-        self.layout_list[1]["widgets_grid_params"].extend(
+        self.layout_dict["top options"]["widgets"].extend([self.FilenameLabel, self.FilenameEntry])
+        self.layout_dict["top options"]["widgets_grid_params"].extend(
             [{"row":2, "column":0, "sticky":"E"},
              {"row":2, "column":1, "sticky":"W"}]
             )
 
         #save directory
-        self.SaveDirLabel = tk.Label(master=self.layout_list[1]["frame"], text="Save to ")
-        self.SaveDirEntry = tk.Entry(master=self.layout_list[1]["frame"], textvariable=self.saveDir_StrVar)
-        self.SaveDirDialogButton = tk.Button(master=self.layout_list[1]["frame"], text="browse", command=self.updateSaveDirDialog)
+        self.SaveDirLabel = tk.Label(master=self.layout_dict["top options"]["frame"], text="Save to ")
+        self.SaveDirEntry = tk.Entry(master=self.layout_dict["top options"]["frame"], textvariable=self.saveDir_StrVar)
+        self.SaveDirDialogButton = tk.Button(master=self.layout_dict["top options"]["frame"], text="browse", command=self.updateSaveDirDialog)
 
-        self.layout_list[1]["widgets"].extend([self.SaveDirLabel, self.SaveDirEntry, self.SaveDirDialogButton])
-        self.layout_list[1]["widgets_grid_params"].extend(
+        self.layout_dict["top options"]["widgets"].extend([self.SaveDirLabel, self.SaveDirEntry, self.SaveDirDialogButton])
+        self.layout_dict["top options"]["widgets_grid_params"].extend(
             [{"row":3, "column":0, "columnspan":1, "sticky":"E"},
              {"row":3, "column":1, "columnspan":1, "sticky":"EW"},
              {"row":3, "column":2, "columnspan":1, "sticky":"W"}]
             )
         
 
-        ##frame 2
+        ##frame 
         #auto open file
-        self.AutoOpenFilelabel = tk.Label(master=self.layout_list[2]["frame"], text="Open image afterwards")
+        self.AutoOpenFilelabel = tk.Label(master=self.layout_dict["left options"]["frame"], text="Open image afterwards")
         self.AutoOpenFileCheckbutton = tk.Checkbutton(
-            master=self.layout_list[2]["frame"],
+            master=self.layout_dict["left options"]["frame"],
             onvalue=True,
             offvalue=False,
             variable=self.autoOpenFile_BoolVar
             )
-        self.layout_list[2]["widgets"].extend([self.AutoOpenFilelabel, self.AutoOpenFileCheckbutton])
-        self.layout_list[2]["widgets_grid_params"].extend(
+        self.layout_dict["left options"]["widgets"].extend([self.AutoOpenFilelabel, self.AutoOpenFileCheckbutton])
+        self.layout_dict["left options"]["widgets_grid_params"].extend(
             [{"row":4, "column":1, "columnspan":1, "sticky":"E"},
              {"row":4, "column":2, "columnspan":1, "sticky":"W"}]
             )
         
         #auto orientation (EXIF)
-        self.AutoOrientlabel = tk.Label(master=self.layout_list[2]["frame"], text="Auto orient images (recommended)")
+        self.AutoOrientlabel = tk.Label(master=self.layout_dict["left options"]["frame"], text="Auto orient images (recommended)")
         self.AutoOrientCheckbutton = tk.Checkbutton(
-            master=self.layout_list[2]["frame"],
+            master=self.layout_dict["left options"]["frame"],
             onvalue=True,
             offvalue=False,
             variable=self.autoOrient_BoolVar
             )
-        self.layout_list[2]["widgets"].extend([self.AutoOrientlabel, self.AutoOrientCheckbutton])
-        self.layout_list[2]["widgets_grid_params"].extend(
+        self.layout_dict["left options"]["widgets"].extend([self.AutoOrientlabel, self.AutoOrientCheckbutton])
+        self.layout_dict["left options"]["widgets_grid_params"].extend(
             [{"row":5, "column":1, "columnspan":1, "sticky":"E"},
              {"row":5, "column":2, "columnspan":1, "sticky":"W"}]
             )
 
 
-        ##frame 3
+        ##frame 
         #border thickness
-        self.BorderthicknessLabel = tk.Label(master=self.layout_list[3]["frame"], text="Border thickness ")        
+        self.BorderthicknessLabel = tk.Label(master=self.layout_dict["right options"]["frame"], text="Border thickness ")        
         self.BorderthicknessSpinBox = ttk.Spinbox(
-            master=self.layout_list[3]["frame"],
+            master=self.layout_dict["right options"]["frame"],
             from_=self.BORDER_THICKNESS_RANGE[0],
             to=self.BORDER_THICKNESS_RANGE[1],
             width=5
             )
         self.BorderthicknessSpinBox.insert(0,10)
 
-        self.layout_list[3]["widgets"].extend([self.BorderthicknessLabel, self.BorderthicknessSpinBox])
-        self.layout_list[3]["widgets_grid_params"].extend(
+        self.layout_dict["right options"]["widgets"].extend([self.BorderthicknessLabel, self.BorderthicknessSpinBox])
+        self.layout_dict["right options"]["widgets_grid_params"].extend(
             [{"row":7, "column":1, "columnspan":1, "sticky":"E"},
              {"row":7, "column":2, "columnspan":1, "sticky":"W"}]
             )
 
         #border color
-        self.BordercolorLabel = tk.Label(master=self.layout_list[3]["frame"], text="Border color ")
+        self.BordercolorLabel = tk.Label(master=self.layout_dict["right options"]["frame"], text="Border color ")
         self.BordercolorCombobox = ttk.Combobox(
-            master=self.layout_list[3]["frame"],
+            master=self.layout_dict["right options"]["frame"],
             width=15,
             values=BORDER_COLORS_KEYS
             )
         self.BordercolorCombobox.current(0)
 
-        self.layout_list[3]["widgets"].extend([self.BordercolorLabel, self.BordercolorCombobox])
-        self.layout_list[3]["widgets_grid_params"].extend(
+        self.layout_dict["right options"]["widgets"].extend([self.BordercolorLabel, self.BordercolorCombobox])
+        self.layout_dict["right options"]["widgets_grid_params"].extend(
             [{"row":8, "column":1, "columnspan":1, "sticky":"E"},
              {"row":8, "column":2, "columnspan":1, "sticky":"W"}]
             )
 
         #outer border
-        self.BorderOuterlabel = tk.Label(master=self.layout_list[3]["frame"],text="Outside border")
+        self.BorderOuterlabel = tk.Label(master=self.layout_dict["right options"]["frame"],text="Outside border")
         self.BorderOuterCheckbutton = tk.Checkbutton(
-            master=self.layout_list[3]["frame"],
+            master=self.layout_dict["right options"]["frame"],
             onvalue=True,
             offvalue=False,
             variable=self.outerBorderOn_BoolVar,
             command=self.updateBorderOutside
             )
         
-        self.layout_list[3]["widgets"].extend([self.BorderOuterlabel, self.BorderOuterCheckbutton])
-        self.layout_list[3]["widgets_grid_params"].extend(
+        self.layout_dict["right options"]["widgets"].extend([self.BorderOuterlabel, self.BorderOuterCheckbutton])
+        self.layout_dict["right options"]["widgets_grid_params"].extend(
             [{"row":9, "column":1, "columnspan":1, "sticky":"E"},
              {"row":9, "column":2, "columnspan":1, "sticky":"W"}]
             )
@@ -277,16 +307,16 @@ class Collager:
     def packWidgets(self):
         #configs
         self.Root.columnconfigure(tk.ALL, weight=1)
-        for i,dic in enumerate(self.layout_list):
-            if i > -1:
-                dic["frame"].columnconfigure(list(range(self.NUM_COLS)), weight=1)
-            else:
-                dic["frame"].columnconfigure(0, weight=1)
+        for key,dic in self.layout_dict.items():
+            dic["frame"].columnconfigure(list(range(self.NUM_COLS)), weight=1)
 
         #packing
-        for f,frame_dic in enumerate(self.layout_list):
+        f = 0
+        for key,frame_dic in self.layout_dict.items():
             if self.DEV_FRAME_BG_ON:
                 frame_dic["frame"]["bg"] = self.DEV_FRAME_COLORS[f]
+                f += 1
+            
             frame_dic["frame"].grid(**frame_dic["frame_grid"])
 
             for i,widget in enumerate(frame_dic["widgets"]):
@@ -346,6 +376,32 @@ class Collager:
 
         print("filename is now: ", self.filename)
 
+
+    def updateFileList(self):
+        print("cycling through...")
+
+        #clear widgets
+        for widget in self.filenames_widgets_list:
+            widget.destroy()
+
+        #add widgets
+        for i, filepath in enumerate(self.filenames_list):
+            _, filename = os.path.split(filepath)
+            
+            print("\twidget for", filename)
+
+            fileWidget = tk.Entry(
+                    master=self.layout_dict["file list"]["frame"]
+                )
+            fileWidget.configure(disabledbackground="light gray", disabledforeground="black")
+            fileWidget.insert(0, filename)
+            fileWidget.grid(row=i, column=0, columnspan=self.NUM_COLS-1, sticky="WE")
+            fileWidget["state"] = "disabled"
+
+            self.filenames_widgets_list.append(fileWidget)
+
+        self.Root.update()
+
     
     def getFilesWithDialog(self):
         files_str = filedialog.askopenfilenames(title="Select images")
@@ -355,6 +411,24 @@ class Collager:
             print("file selected:", i)
         
         self.filenames_list = image_files_list
+
+        print("updaying file list widgets")
+        self.updateFileList()
+
+    def dragDropFiles(self, event):
+        #process drag and drop string
+        files_list_str = event.data[1:]
+        files_list_str = files_list_str[:len(files_list_str)-1]
+        files_list = files_list_str.split("} {")
+
+        for i in files_list:
+            print("file dragged and dropped:", i)
+
+        self.filenames_list = files_list
+        #print("running collager...")
+        #self.runCollager(files_list, True)
+        print("updaying file list widgets")
+        self.updateFileList()
 
 
     def runCollager(self):
@@ -405,19 +479,6 @@ class Collager:
         else:
             print("no images selected/cancelled")
 
-
-    def dragDropFiles(self, event):
-        #process drag and drop string
-        files_list_str = event.data[1:]
-        files_list_str = files_list_str[:len(files_list_str)-1]
-        files_list = files_list_str.split("} {")
-
-        for i in files_list:
-            print("file dragged and dropped:", i)
-
-        self.filenames_list = files_list
-        #print("running collager...")
-        #self.runCollager(files_list, True)
 
 
     def run(self):
