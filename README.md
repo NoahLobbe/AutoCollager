@@ -56,4 +56,4 @@ Fix was to always rotate the final image. Also, rescaled the image to have a wid
   - [ ] add file type checking so that won't try to use images that PIL can't
 - [ ] File input list. E.g. user can add files one by one if neccessary, which adds a widget with the file name
 - [ ] (Low priority) Figure out how to change task/tool bar icon for program. For Version 2.1 using Apple's Automator to run the program does **NOT** allow `tkinter` to change the icon
-- [ ] Make an installer
+- [ ] Make an installer script so that it downloads and runs everything
