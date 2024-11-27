@@ -48,6 +48,7 @@ class Collager:
         self.filename = ""
         self.file_count = 0
         self.save_directory = str(os.path.join(Path.home(), "Downloads"))
+        self.filenames_list = []
         
         self.outerBorderOn_BoolVar = tk.BooleanVar(value=True)
         self.filename_StrVar = tk.StringVar(value = self.filename_default)
@@ -97,8 +98,6 @@ class Collager:
         | frame 2 | frame 3 |
         ---------------------
         """
-        
-        
 
         self.makeWidgets()
         self.packWidgets()
@@ -134,17 +133,17 @@ class Collager:
 
 
         #run button
-        self.RunButton = tk.Button(
+        self.SelectFilesButton = tk.Button(
             master=self.layout_list[0]["frame"],
             text="Click to choose images \nor \nDrag 'n' Drop \n",
             relief=tk.GROOVE,
             height=10,
             command=self.runCollager
             )
-        self.RunButton.drop_target_register(tkDnD2.DND_ALL)
-        self.RunButton.dnd_bind("<<Drop>>", self.dragDropCollager)
+        self.SelectFilesButton.drop_target_register(tkDnD2.DND_ALL)
+        self.SelectFilesButton.dnd_bind("<<Drop>>", self.dragDropCollager)
 
-        self.layout_list[0]["widgets"].append(self.RunButton)
+        self.layout_list[0]["widgets"].append(self.SelectFilesButton)
         self.layout_list[0]["widgets_grid_params"].append({"row":1, "column":0, "sticky":"NSEW"})
 
         ##frame 1
@@ -394,8 +393,9 @@ class Collager:
         for i in files_list:
             print("file dragged and dropped:", i)
 
-        print("running collager...")
-        self.runCollager(files_list, True)
+        self.filenames_list = files_list
+        #print("running collager...")
+        #self.runCollager(files_list, True)
 
 
     def run(self):

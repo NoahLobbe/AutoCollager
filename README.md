@@ -52,6 +52,7 @@ Fix was to always rotate the final image. Also, rescaled the image to have a wid
 - [x] Read EXIF data on images to rotate images to correct orientation. However, the program is not smart enough to detect whether a book's orientation is contridicting the EXIf data or not, and fix it. Thanks to `jdhao` for his page on the values for EXIF orientation [JPEG Image Orientation and Exif](https://web.archive.org/web/20241110203841/https://jdhao.github.io/2019/07/31/image_rotation_exif_info/)
 - [x] Make checkbox for EXIF (auto orientation), default on
 - [ ] Run button instead of automatically running
+- [ ] Make a widget for each filename so that the user can seen them listed
 - [ ] Change text for file select button to be more descriptive and list acceptable file types
   - [ ] add file type checking so that won't try to use images that PIL can't
 - [ ] File input list. E.g. user can add files one by one if neccessary, which adds a widget with the file name
