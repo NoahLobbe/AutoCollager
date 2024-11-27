@@ -132,16 +132,16 @@ class Collager:
         self.layout_list[0]["widgets_grid_params"].append({"row":0, "column":0, "columnspan":3, "sticky":""})
 
 
-        #run button
+        #file select button button
         self.SelectFilesButton = tk.Button(
             master=self.layout_list[0]["frame"],
             text="Click to choose images \nor \nDrag 'n' Drop \n",
             relief=tk.GROOVE,
             height=10,
-            command=self.runCollager
+            command=self.getFilesWithDialog
             )
         self.SelectFilesButton.drop_target_register(tkDnD2.DND_ALL)
-        self.SelectFilesButton.dnd_bind("<<Drop>>", self.dragDropCollager)
+        self.SelectFilesButton.dnd_bind("<<Drop>>", self.dragDropFiles)
 
         self.layout_list[0]["widgets"].append(self.SelectFilesButton)
         self.layout_list[0]["widgets_grid_params"].append({"row":1, "column":0, "sticky":"NSEW"})
@@ -335,6 +335,16 @@ class Collager:
 
         print("filename is now: ", self.filename)
 
+    
+    def getFilesWithDialog(self):
+        files_str = filedialog.askopenfilenames(title="Select images")
+        image_files_list = self.Root.tk.splitlist(files_str)
+
+        for i in image_files_list:
+            print("file selected:", i)
+        
+        self.filenames_list = image_files_list
+
 
     def runCollager(self, image_files_list=None, dragged_dropped=False):
         print("passed params:", image_files_list, dragged_dropped)
@@ -384,7 +394,7 @@ class Collager:
             print("no images selected/cancelled")
 
 
-    def dragDropCollager(self, event):
+    def dragDropFiles(self, event):
         #process drag and drop string
         files_list_str = event.data[1:]
         files_list_str = files_list_str[:len(files_list_str)-1]
