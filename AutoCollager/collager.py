@@ -65,7 +65,7 @@ class Collager:
         self.layout_list =  [
             {
              "frame": tk.Frame(master=self.Root),
-             "frame_grid":{"row":0, "column":0, "columnspan":2, "sticky":"EW", "padx":self.PAD, "pady":self.PAD},
+             "frame_grid":{"row":0, "column":0, "columnspan":self.NUM_COLS, "sticky":"EW", "padx":self.PAD, "pady":self.PAD},
              "widgets": [],
              "widgets_grid_params":[]
              },
@@ -129,7 +129,7 @@ class Collager:
             font=("TkDefaultFont", 16)
             )
         self.layout_list[0]["widgets"].append(self.TitleLabel)
-        self.layout_list[0]["widgets_grid_params"].append({"row":0, "column":0, "columnspan":3, "sticky":""})
+        self.layout_list[0]["widgets_grid_params"].append({"row":0, "column":1, "columnspan":3, "sticky":""})
 
 
         #file select button button
@@ -144,7 +144,18 @@ class Collager:
         self.SelectFilesButton.dnd_bind("<<Drop>>", self.dragDropFiles)
 
         self.layout_list[0]["widgets"].append(self.SelectFilesButton)
-        self.layout_list[0]["widgets_grid_params"].append({"row":1, "column":0, "sticky":"NSEW"})
+        self.layout_list[0]["widgets_grid_params"].append({"row":1, "column":0, "columnspan":self.NUM_COLS, "sticky":"NSEW"})
+
+        #run button
+        self.RunButton = tk.Button(
+            master=self.layout_list[0]["frame"],
+            text="Run",
+            bg="light green",
+            command=self.runCollager
+        )
+        self.layout_list[0]["widgets"].append(self.RunButton)
+        self.layout_list[0]["widgets_grid_params"].append({"row":2, "column":2, "sticky":"EW"})
+
 
         ##frame 1
         #options
@@ -267,7 +278,7 @@ class Collager:
         #configs
         self.Root.columnconfigure(tk.ALL, weight=1)
         for i,dic in enumerate(self.layout_list):
-            if i > 0:
+            if i > -1:
                 dic["frame"].columnconfigure(list(range(self.NUM_COLS)), weight=1)
             else:
                 dic["frame"].columnconfigure(0, weight=1)
@@ -346,8 +357,7 @@ class Collager:
         self.filenames_list = image_files_list
 
 
-    def runCollager(self, image_files_list=None, dragged_dropped=False):
-        print("passed params:", image_files_list, dragged_dropped)
+    def runCollager(self):
 
         #update varaibels
         color = self.updateBorderColor()
@@ -356,6 +366,7 @@ class Collager:
         outer_border_thickness = is_border *  border_thickness
         auto_orient = self.autoOrient_BoolVar.get()
 
+        '''
         #get images
         if (image_files_list == None) and not dragged_dropped:
             files_str = filedialog.askopenfilenames(title="Select images")
@@ -363,10 +374,11 @@ class Collager:
 
             for i in image_files_list:
                 print("file selected:", i)
-
-        if len(image_files_list) > 1:
+        '''
         
-            img_obj_list = self.Merger.openImages(image_files_list, auto_orient)
+        if len(self.filenames_list) > 1:
+        
+            img_obj_list = self.Merger.openImages(self.filenames_list, auto_orient)
 
             self.updateSaveDir()
             self.updateFilename()
