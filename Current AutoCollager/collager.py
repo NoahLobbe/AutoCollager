@@ -2,13 +2,15 @@ import tkinter as tk
 from tkinter import ttk
 from tkinter import filedialog
 import tkinterdnd2 as tkDnD2
-from merger import Merger
 from datetime import datetime
 import os
 from pathlib import Path
 import subprocess
 import platform
 
+from merger import Merger
+
+import updater
 
 BORDER_COLORS_DICT = {
     "white": (255,255,255,255),
@@ -65,6 +67,7 @@ class Collager:
         self.widget_packing_list = []
 
 
+
         """
         ---------------------
         |       frame       |
@@ -118,12 +121,36 @@ class Collager:
              }
         }
         
-
+        self.makeMenubar()
         self.makeWidgets()
         self.packWidgets()
         self.updateFilename()
         print("updating save dir...")
         self.updateSaveDir()
+
+    
+    def quitApp(self):
+        print("quiting...")
+        self.Root.destroy()
+        exit()
+
+
+    def makeMenubar(self):
+        self.MenuBar = tk.Menu(self.Root)
+        self.Root.config(menu=self.MenuBar)
+
+        #file menu
+        self.FileMenu = tk.Menu(self.MenuBar, tearoff=0)
+        self.MenuBar.add_cascade(menu=self.FileMenu, label="File")
+        self.FileMenu.add_command(label="Choose images...", command=self.getFilesWithDialog)
+        self.FileMenu.add_separator()
+        self.FileMenu.add_command(label="Quit", command=self.quitApp)
+
+        #update menu
+        self.UpdateMenu = tk.Menu(self.MenuBar, tearoff=0)
+        self.MenuBar.add_cascade(menu=self.UpdateMenu, label="Update")
+        self.UpdateMenu.add_command(label="Get Latest Update", command=self.getUpdate)
+        
 
 
     def centreWindow(self):
@@ -401,6 +428,17 @@ class Collager:
             self.filenames_widgets_list.append(fileWidget)
 
         self.Root.update()
+
+
+    def getUpdate(self):
+        print("getting update...")
+        subprocess.Popen(["python", '&', "updater.py"], shell=True, creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
+        #subprocess.run(['start', 'python', 'updater.py'])
+        #updater.func()
+        
+        self.quitApp()
+        print("LOL still running")
+
 
     
     def getFilesWithDialog(self):
