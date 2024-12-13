@@ -8,14 +8,24 @@ R = requests.get(URL)
 print(
   R.json()["name"],
   R.json()["tag_name"],
-  R.json()["assets_url"],
-  R.json()["zipball_url"]
+  R.json()["assets_url"]
       )
 
-save_directory = str(os.path.join(Path.home(), "Downloads"))
-file = save_directory + "\\" + "output.zip"
+downloads_path = str(os.path.join(Path.home(), "Downloads"))
+target_path = downloads_path + "\\assets"
+if not os.path.exists(target_path):
+  os.mkdir(target_path)
+  print("made folder", target_path)
 
-Z = requests.get(R.json()["zipball_url"])
-print(Z.status_code)
-with open(file, "wb") as fd:
-    fd.write(Z.content)
+
+for i, dic in enumerate(R.json()["assets"]):
+  print(i, dic["name"], dic["url"])
+
+  file = target_path + "\\" + dic["name"]
+  asset_response = requests.get(dic["url"], headers={"accept": "application/octet-stream"})
+  print(asset_response.status_code)
+
+  with open(file, "wb") as f:
+    f.write(asset_response.content)
+
+print("done updating...")
