@@ -9,33 +9,13 @@ print(
   R.json()["name"],
   R.json()["tag_name"],
   R.json()["assets_url"],
-  len(R.json()["assets"])
+  R.json()["zipball_url"]
       )
 
-
-
 save_directory = str(os.path.join(Path.home(), "Downloads"))
-headers = {"accept": "application/octet-stream"}
+file = save_directory + "\\" + "output.zip"
 
-print("downloading files...")
-
-for i,dic in enumerate(R.json()["assets"]):
-  print(i, dic["url"], dic["name"])
-
-  AssetResponse = requests.get(dic["url"]) #, headers=headers)
-  filepath = save_directory + "\\" + dic["name"]
-  with open(filepath, "wb") as file:
-    file.write(AssetResponse.content)
-
-
-
-
-
-
-
-'''
 Z = requests.get(R.json()["zipball_url"])
 print(Z.status_code)
 with open(file, "wb") as fd:
     fd.write(Z.content)
-'''

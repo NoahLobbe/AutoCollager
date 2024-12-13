@@ -1,1 +1,21 @@
-{"url":"https://api.github.com/repos/NoahLobbe/AutoCollager/releases/assets/213052627","id":213052627,"node_id":"RA_kwDONMvyss4MsuzT","name":"LICENSE.md","label":null,"uploader":{"login":"NoahLobbe","id":115848968,"node_id":"U_kgDOBue3CA","avatar_url":"https://avatars.githubusercontent.com/u/115848968?v=4","gravatar_id":"","url":"https://api.github.com/users/NoahLobbe","html_url":"https://github.com/NoahLobbe","followers_url":"https://api.github.com/users/NoahLobbe/followers","following_url":"https://api.github.com/users/NoahLobbe/following{/other_user}","gists_url":"https://api.github.com/users/NoahLobbe/gists{/gist_id}","starred_url":"https://api.github.com/users/NoahLobbe/starred{/owner}{/repo}","subscriptions_url":"https://api.github.com/users/NoahLobbe/subscriptions","organizations_url":"https://api.github.com/users/NoahLobbe/orgs","repos_url":"https://api.github.com/users/NoahLobbe/repos","events_url":"https://api.github.com/users/NoahLobbe/events{/privacy}","received_events_url":"https://api.github.com/users/NoahLobbe/received_events","type":"User","user_view_type":"public","site_admin":false},"content_type":"application/octet-stream","state":"uploaded","size":1087,"download_count":0,"created_at":"2024-12-13T04:23:44Z","updated_at":"2024-12-13T04:23:46Z","browser_download_url":"https://github.com/NoahLobbe/AutoCollager/releases/download/v2.9/LICENSE.md"}
+MIT License
+
+Copyright (c) 2024 NoahLobbe
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
