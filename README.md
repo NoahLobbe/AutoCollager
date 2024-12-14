@@ -1,7 +1,7 @@
 # AutoCollager
 
 ## Installation
-Note: dependencies can be seen in [`requirements.txt`](AutoCollager/requirements.txt).
+Note: dependencies can be seen in [`requirements.txt`](Current AutoCollager/requirements.txt).
 1. Install Python
 2. Download this package
 3. Setup virtual environment
@@ -27,7 +27,7 @@ Version number is `x.y`, where
 - `x` is the major number, which increases when a feature is added
 - `y` is the update number, increases when a fix has been issued or it has been re-written to optimise or clean up code
 
-Current version is always [`AutoCollager`](AutoCollager/).
+Current version is always [`AutoCollager`](Current AutoCollager/).
 
 ### Version 1
 very rough quick version
