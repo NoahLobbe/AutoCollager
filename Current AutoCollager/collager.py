@@ -357,7 +357,8 @@ class Collager:
 
     def getUpdate(self):
         msg_box_answer = tk.messagebox.askyesno(
-            master=self.Root,title="Start update?",
+            master=self.Root,
+            title="Start update?",
             message="Start update?",
             detail="This will close the program. Do you want to proceed?",
             default="no"
