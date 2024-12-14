@@ -7,10 +7,13 @@ import os
 from pathlib import Path
 import subprocess
 import platform
+import signal
+import sys
+import threading
 
 from merger import Merger
-
 import updater
+
 
 BORDER_COLORS_DICT = {
     "white": (255,255,255,255),
@@ -432,9 +435,11 @@ class Collager:
 
     def getUpdate(self):
         print("getting update...")
-        subprocess.Popen(["python", '&', "updater.py"], shell=True, creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
+        
+        #subprocess.Popen([sys.executable, os.getcwd() + "\\updater.py", '&'], creationflags=subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP)
         #subprocess.run(['start', 'python', 'updater.py'])
         #updater.func()
+        threading.Thread(target=updater.func, daemon=False).start()
         
         self.quitApp()
         print("LOL still running")
