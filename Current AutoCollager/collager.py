@@ -4,11 +4,9 @@ from tkinter import filedialog
 import tkinterdnd2 as tkDnD2
 from datetime import datetime
 import os
+import platform
 from pathlib import Path
 import subprocess
-import platform
-import signal
-import sys
 import threading
 
 from merger import Merger
@@ -357,6 +355,24 @@ class Collager:
         self.Root.deiconify()
 
 
+    def getUpdate(self):
+        msg_box_answer = tk.messagebox.askyesno(
+            master=self.Root,title="Start update?",
+            message="Start update?",
+            detail="This will close the program. Do you want to proceed?",
+            default="no"
+            )
+        
+        if msg_box_answer:
+            print("getting update")
+            threading.Thread(target=updater.func, daemon=False).start()
+            self.quitApp()
+
+
+    
+
+
+
     def updateBorderColor(self):
         option_menu_value = self.BordercolorCombobox.get()
         self.border_color = BORDER_COLORS_DICT[option_menu_value]
@@ -432,20 +448,6 @@ class Collager:
 
         self.Root.update()
 
-
-    def getUpdate(self):
-        print("getting update...")
-        
-        #subprocess.Popen([sys.executable, os.getcwd() + "\\updater.py", '&'], creationflags=subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP)
-        #subprocess.run(['start', 'python', 'updater.py'])
-        #updater.func()
-        threading.Thread(target=updater.func, daemon=False).start()
-        
-        self.quitApp()
-        print("LOL still running")
-
-
-    
     def getFilesWithDialog(self):
         files_str = filedialog.askopenfilenames(title="Select images")
         image_files_list = self.Root.tk.splitlist(files_str)
