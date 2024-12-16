@@ -400,7 +400,7 @@ class Collager:
         print("args:", args)
         path = self.saveDir_StrVar.get()
             
-        if os.path(path):
+        if os.path.isdir(path):
             self.save_directory = path
 
             if len(self.save_directory) < self.DISP_TEXT_LENGTH:
