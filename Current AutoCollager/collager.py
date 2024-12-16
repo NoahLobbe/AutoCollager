@@ -10,15 +10,16 @@ import subprocess
 import threading
 
 from merger import Merger
-import updater
+from updater import Updater
 
 
+DEV_MODE = True
 BORDER_COLORS_DICT = {
     "white": (255,255,255,255),
     "black": (0,0,0,255),
     "red": (255,0,0,255),
-    "blue": (0,255,0,255),
-    "green": (0,0,255,255),
+    "blue": (0,0,255,255),
+    "green": (0,255,0,255),
     "yellow": (255,255,0,255),
     "cyan": (0,255,255,255),
     "magenta": (255,0,255,255),
@@ -50,7 +51,7 @@ class Collager:
         self.filename_default = datetime.today().strftime('%Y-%m-%d %I.%M.%S%p') + " merged"
         self.filename = ""
         self.file_count = 0
-        self.save_directory = str(os.path.join(Path.home(), "Downloads"))
+        self.save_directory = os.path.join(Path.home(), "Downloads")
         self.filenames_list = []
         self.filenames_widgets_list = []
         self.file_list_frame_parent_widget_index = None
@@ -131,7 +132,7 @@ class Collager:
 
     
     def quitApp(self):
-        print("quiting...")
+        print("quiting " + self.Root.title())
         self.Root.destroy()
         exit()
 
@@ -366,7 +367,11 @@ class Collager:
         
         if msg_box_answer:
             print("getting update")
-            threading.Thread(target=updater.func, daemon=False).start()
+            if DEV_MODE:
+                UpdaterObj = Updater(os.path.join(Path.home(), "Downloads") + "\\update")
+            else:
+                UpdaterObj = Updater(os.getcwd())
+            threading.Thread(target=UpdaterObj.run, daemon=False).start()
             self.quitApp()
 
 
@@ -395,7 +400,7 @@ class Collager:
         print("args:", args)
         path = self.saveDir_StrVar.get()
             
-        if os.path.isdir(path):
+        if os.path(path):
             self.save_directory = path
 
             if len(self.save_directory) < self.DISP_TEXT_LENGTH:

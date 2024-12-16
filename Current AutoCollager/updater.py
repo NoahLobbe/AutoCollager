@@ -1,58 +1,14 @@
 import requests
 import os
-from pathlib import Path
-import subprocess
-import signal
-import sys
-import ctypes
-import platform
 from tkinter import messagebox
-from tkinter import filedialog
-
-
-def func(*args):
-  #print(args)
-
-  print("killing caller script")
-  print("child? PID", os.getpid())
-  URL = "https://api.github.com/repos/NoahLobbe/AutoCollager/releases/latest"
-  R = requests.get(URL)
-
-  print(
-    R.json()["name"],
-    R.json()["tag_name"],
-    R.json()["assets_url"]
-    )
-
-  downloads_path = str(os.path.join(Path.home(), "Downloads"))
-  target_path = downloads_path + "\\assets"
-  if not os.path.exists(target_path):
-    os.mkdir(target_path)
-  print("made folder", target_path)
-
-
-  for i, dic in enumerate(R.json()["assets"]):
-    print(i, dic["name"], dic["url"])
-
-    file = target_path + "\\" + dic["name"]
-    asset_response = requests.get(dic["url"], headers={"accept": "application/octet-stream"})
-    print(asset_response.status_code)
-
-    with open(file, "wb") as f:
-      f.write(asset_response.content)
-
-  print("\n\ndone updating...")
-
-
-
-
-
 
 
 class Updater:
   def __init__(self, installation_path):
     self.dest = installation_path
-    #self.Root = tk.Tk()
+    if not os.path.isdir(self.dest):
+      os.mkdir(self.dest)
+
 
   def run(self):
     
@@ -79,8 +35,10 @@ class Updater:
         f.write(AssetResponse.content)
 
 
-
 if __name__ == "__main__":
+  from pathlib import Path
+  from tkinter import filedialog
+
   update_dest = filedialog.askdirectory(title="Select Update destination...")
 
   if not os.path.isdir(update_dest):

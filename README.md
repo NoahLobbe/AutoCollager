@@ -52,7 +52,7 @@ Fix was to always rotate the final image. Also, rescaled the image to have a wid
 - [x] Make checkbox for EXIF (auto orientation), default on
 - [x] Run button instead of automatically running
 - [x] Make a widget for each filename so that the user can seen them listed
-- [ ] Make an updater menubar and script that pulls latest release from Github
+- [x] Make an updater menubar and script that pulls latest release from Github
 - [ ] Change filename list to a single Text widget with scroll bar so that the App window doesn't get super long
 - [ ] Add Button to clear selected files
 - [ ] Change text for file select button to be more descriptive and list acceptable file types
