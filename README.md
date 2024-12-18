@@ -3,18 +3,22 @@
 ## Installation
 Note: dependencies can be seen in `requirements.txt`.
 
-[updater.py](https://github.com/NoahLobbe/AutoCollager/releases/download/latest/updater.zip)
+
 1. Install Python
-2. Download this package
-3. Setup virtual environment
+2. Download [`updater.py`](https://github.com/NoahLobbe/AutoCollager/releases/latest/download/updater.py)
+3. Setup virtual environment in desired location
    - Windows
      - `> py -m venv .venv`
-     - `> call .venv/Scripts/activate`
-     - `(.venv) C:\path\to\directory> pip install requirements.txt`
    - Mac
      - `$ python3 -m venv .venv`
-     - `$ source .venv/bin/activate`
-     - `(.venv) path/to/directory/$ pip install requirements.txt`
+4. Run `updater.py` using IDLE or from terminal. Mac will probably have some popups asking for permissions to folders or use of terminal
+    - Windows Command line
+      - `py updater.py`
+    - Mac Terminal
+      - 'python3 updater.py`
+5. Make/use a quick launcher
+  - Mac
+    - Automator
 
 ## Useage
 ### Windows
