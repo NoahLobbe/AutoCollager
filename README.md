@@ -81,3 +81,4 @@ Some debugging on Mac
 - [ ] Add button to get remove currently selected file
 - [ ] maybe add a widget that subtley (NO POPUPS!) that there is an updater available. Maybe upper right corner???
 - [ ] Some sort of preview of placement? Maybe just a grid with filenames instead of actual images. To get preview maybe make a Toplevel window?
+- [ ] Add a configuration file for some basic customisations. Can also be an easier way for the updater to updater a version str which is passed to the program title
