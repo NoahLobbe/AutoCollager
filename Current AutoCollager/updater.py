@@ -66,9 +66,11 @@ class Updater:
         python_path += "\\bin\\python"
     elif platform.system() == "Windows":
         python_path += "\\Scripts\\python"
-    #subprocess.Popen([python_path, "-m", "pip", "install", "requirements.txt"])
+    
     print("python path:", python_path)
-    subprocess.Popen([python_path, "-m", "pip", "freeze"], stdout=open("lol.txt", "w"))
+    f = open(self.dest+"\\lol.txt", "w")
+    subprocess.call([python_path, "-m", "pip", "install", "-r", self.dest + "\\requirements.txt"])
+    subprocess.call([python_path, "-m", "pip", "freeze"], stdout=f, stderr=f)
 
 
 if __name__ == "__main__":
@@ -78,11 +80,12 @@ if __name__ == "__main__":
 
 
   update_dest = filedialog.askdirectory(title="Select Update destination...")
-
+  '''
   if not os.path.isdir(update_dest):
     update_dest = str(os.path.join(Path.home(), "Documents\\AutoCollager"))
     if not os.path.isdir(update_dest):
       os.mkdir(update_dest)
+  '''
 
   print("running updater independantly")
   App = Updater(update_dest)

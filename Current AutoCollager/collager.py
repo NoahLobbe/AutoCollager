@@ -368,7 +368,10 @@ class Collager:
         if msg_box_answer:
             print("getting update")
             if DEV_MODE:
-                UpdaterObj = Updater(os.path.join(Path.home(), "Downloads") + "\\update")
+                updater_dest_path = os.path.join(Path.home(), "Downloads") + "\\update"
+                if not os.path.isdir(updater_dest_path):
+                    os.mkdir(updater_dest_path)
+                UpdaterObj = Updater(updater_dest_path)
             else:
                 UpdaterObj = Updater(os.getcwd())
             threading.Thread(target=UpdaterObj.run, daemon=False).start()
