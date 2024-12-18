@@ -1,31 +1,22 @@
 # AutoCollager
 
 ## Installation
-Note: dependencies can be seen in `requirements.txt`.
-
-
 1. Install Python
-2. Download [`updater.py`](https://github.com/NoahLobbe/AutoCollager/releases/latest/download/updater.py)
-3. Setup virtual environment in desired location
+2. Setup virtual environment in desired location
    - Windows
      - `> py -m venv .venv`
    - Mac
      - `$ python3 -m venv .venv`
-4. Run `updater.py` using IDLE or from terminal. Mac will probably have some popups asking for permissions to folders or use of terminal
+3. Download [`updater.py`](https://github.com/NoahLobbe/AutoCollager/releases/latest/download/updater.py)
+4. Run `updater.py` using IDLE or from terminal. Automatically installs `requests` if not in main python installation, and then installs `requirements.txt` in virtual environment (`.venv`)
     - Windows Command line
       - `py updater.py`
     - Mac Terminal
+      - Will probably have some popups asking for permissions to folders or use of terminal
       - 'python3 updater.py`
 5. Make/use a quick launcher
-  - Mac
-    - Automator
-
-## Useage
-### Windows
-Haven't done yet...
-
-### Mac
-Create an Automator file to activate the virtual environment, run `main.py`, and then deactivate the virtual environment when finished.
+    - Mac
+      - Automator
 
 
 ## Versions
@@ -59,7 +50,7 @@ Fix was to always rotate the final image. Also, rescaled the image to have a wid
 - [x] Run button instead of automatically running
 - [x] Make a widget for each filename so that the user can seen them listed
 - [x] Make an updater menubar and script that pulls latest release from Github
-- [] Change filename list to a single Text widget with scroll bar so that the App window doesn't get super long
+- [ ] Change filename list to a single Text widget with scroll bar so that the App window doesn't get super long
 - [ ] Add Button to clear selected files
 - [ ] Change text for file select button to be more descriptive and list acceptable file types
   - [ ] add file type checking so that won't try to use images that PIL can't
@@ -71,8 +62,22 @@ Fix was to always rotate the final image. Also, rescaled the image to have a wid
 Some debugging on Mac
 
 ### Release v3.2 
+#### To Do list
+- [x] User can now add files one by one. Just had to append new files to current file list, not overwrite! :D
 - [x] Change filename list to a single Text widget with scroll bar so that the App window doesn't get super long
   - Used Tkinter Listbox and scrollbars (SO COOL!)
 - [x] Add Button to clear selected files
 
 ### Current Development
+#### To Do list (Updater)
+- [ ] Cleanup code
+- [ ] Have a simple GUI so that user can see what is going on and knows when it is finished
+
+#### To Do list (Main program)
+- [ ] Add proper logging so that i just read text files instead of having to open everything in debug mode
+- [ ] background colors of buttons doesn't show up on Mac
+- [ ] Icon for windows
+- [ ] in file list, just show file names, not whole path as it is harder to read.
+- [ ] Add button to get remove currently selected file
+- [ ] maybe add a widget that subtley (NO POPUPS!) that there is an updater available. Maybe upper right corner???
+- [ ] Some sort of preview of placement? Maybe just a grid with filenames instead of actual images. To get preview maybe make a Toplevel window?
