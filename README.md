@@ -3,7 +3,7 @@
 ## Installation
 Note: dependencies can be seen in `requirements.txt`.
 
-[updater.py](https://github.com/NoahLobbe/AutoCollager/releases/latest/download/updater.zip)
+[updater.py](https://github.com/NoahLobbe/AutoCollager/releases/download/latest/updater.zip)
 1. Install Python
 2. Download this package
 3. Setup virtual environment
