@@ -1,8 +1,8 @@
 # AutoCollager
 
 ## Installation
-1. Install Python
-2. Setup virtual environment in desired location
+1. Install [Python](https://www.python.org/)
+2. Setup virtual environment in desired location.
    - Windows
      - `> py -m venv .venv`
    - Mac
@@ -13,7 +13,7 @@
       - `py updater.py`
     - Mac Terminal
       - Will probably have some popups asking for permissions to folders or use of terminal
-      - 'python3 updater.py`
+      - `python3 updater.py`
 5. Make/use a quick launcher
     - Mac
       - Automator
