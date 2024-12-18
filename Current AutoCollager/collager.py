@@ -59,6 +59,7 @@ class Collager:
         self.outerBorderOn_BoolVar = tk.BooleanVar(value=True)
         self.filename_StrVar = tk.StringVar(value = self.filename_default)
         self.saveDir_StrVar = tk.StringVar(value = self.save_directory)
+        self.filenamesList_StrVar = tk.StringVar(value=self.filenames_list)
         self.autoOpenFile_BoolVar = tk.BooleanVar(value=True)
         self.autoOrient_BoolVar = tk.BooleanVar(value=True)
 
@@ -201,14 +202,25 @@ class Collager:
         self.layout_dict["top running"]["widgets_grid_params"].append({"row":1, "column":0, "columnspan":self.NUM_COLS, "sticky":"NSEW"})
 
         #filelist label
-        '''
-        self.FilesListLabel = tk.Label(
+        self.FilesListBox = tk.Listbox(
             master=self.layout_dict["file list"]["frame"],
-            text="Files:"
+            listvariable=self.filenamesList_StrVar,
+            height=5 # # lines listed prior to being scrolled
             )
-        self.layout_dict["file list"]["widgets"].append(self.FilesListLabel)
-        self.layout_dict["file list"]["widgets_grid_params"].append({"row":0, "column":0, "sticky":"EW"})
-        '''
+        self.layout_dict["file list"]["widgets"].append(self.FilesListBox)
+        self.layout_dict["file list"]["widgets_grid_params"].append({"row":1, "column":0, "columnspan":self.NUM_COLS, "sticky":"NSEW"})
+
+        ## scroll bar
+        self.Fileslist_Scrollbar = ttk.Scrollbar(
+            master=self.layout_dict["file list"]["frame"],
+            orient=tk.VERTICAL,
+            command=self.FilesListBox.yview
+        )
+        self.FilesListBox.configure(yscrollcommand=self.Fileslist_Scrollbar.set)
+        self.layout_dict["file list"]["widgets"].append(self.Fileslist_Scrollbar)
+        self.layout_dict["file list"]["widgets_grid_params"].append({"row":1, "column":self.NUM_COLS, "sticky":"NS"})
+
+
 
         ##run button frame
         self.RunButton = tk.Button(
@@ -450,6 +462,8 @@ class Collager:
             
             print("\twidget for", filename)
 
+
+            """
             fileWidget = tk.Entry(
                     master=self.layout_dict["file list"]["frame"]
                 )
@@ -459,6 +473,7 @@ class Collager:
             fileWidget["state"] = "disabled"
 
             self.filenames_widgets_list.append(fileWidget)
+            """
 
         self.Root.update()
 
@@ -470,6 +485,7 @@ class Collager:
             print("file selected:", i)
         
         self.filenames_list += image_files_list #append to list
+        self.filenamesList_StrVar.set(self.filenames_list)
 
         print("updaying file list widgets")
         self.updateFileList()
@@ -484,6 +500,8 @@ class Collager:
             print("file dragged and dropped:", i)
 
         self.filenames_list += files_list #append to list
+        self.filenamesList_StrVar.set(self.filenames_list)
+
         #print("running collager...")
         #self.runCollager(files_list, True)
         print("updaying file list widgets")
