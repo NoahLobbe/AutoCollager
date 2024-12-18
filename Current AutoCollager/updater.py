@@ -20,7 +20,7 @@ class Updater:
     #check there is a virtual env
     if not os.path.isdir(self.virtual_env_path):
       print(self.virtual_env_path)
-      self._errorWindow(f"Update installation path invalid; virtual environment folder ({self.virtual_env_name}) doesn't exist!") 
+      self._errorWindow(f"Update installation path invalid; virtual environment folder ({self.virtual_env_path}) doesn't exist!") 
 
     #check that non standard modules are installed
     requests_spec = importlib.util.find_spec("requests")

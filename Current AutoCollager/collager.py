@@ -13,7 +13,7 @@ from merger import Merger
 from updater import Updater
 
 
-DEV_MODE = True
+DEV_MODE = False
 BORDER_COLORS_DICT = {
     "white": (255,255,255,255),
     "black": (0,0,0,255),
@@ -516,7 +516,7 @@ class Collager:
                 self.filename = self.filename_default + (f" ({self.file_count})" * (self.file_count > 0))
                 self.file_count += 1
 
-            filename = self.save_directory +  "\\" + self.filename + self.FILE_FORMAT
+            filename = self.save_directory +  "/" + self.filename + self.FILE_FORMAT
             print("filename:", filename)
 
             self.Merger.mergeImages(img_obj_list, filename, color, border_thickness, outer_border_thickness)
@@ -526,7 +526,7 @@ class Collager:
             print("auto open checkbox value:", self.autoOpenFile_BoolVar.get())
             if self.autoOpenFile_BoolVar.get():
                 if platform.system() == "Darwin":
-                    subprocess.run(["/usr/bin/open","Downloads/"])
+                    subprocess.run(["/usr/bin/open", filename])
                 elif platform.system() == "Windows":
                     os.startfile(filename)
                 
