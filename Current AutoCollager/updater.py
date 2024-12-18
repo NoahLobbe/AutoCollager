@@ -11,7 +11,7 @@ class Updater:
   def __init__(self, installation_path):
     self.dest = installation_path
     self.virtual_env_name = ".venv"
-    self.virtual_env_path  = self.dest + "\\" + self.virtual_env_name
+    self.virtual_env_path  = self.dest + "/" + self.virtual_env_name
     
     #make sure its real
     if not os.path.isdir(self.dest):
@@ -53,7 +53,7 @@ class Updater:
     for i, asset_dict in enumerate(RepoResponse.json()["assets"]):
       
       AssetResponse = requests.get(asset_dict["url"], headers={"accept": "application/octet-stream"})
-      file = self.dest + "\\" + asset_dict["name"]
+      file = self.dest + "/" + asset_dict["name"]
 
       print(f"asset {i}: status code {AssetResponse.status_code}, asset file {file}")
       with open(file, "wb") as f:
@@ -63,14 +63,14 @@ class Updater:
     #install modules
     python_path = self.virtual_env_path
     if platform.system() == "Darwin":
-        python_path += "\\bin\\python"
+        python_path += "/bin/python"
     elif platform.system() == "Windows":
-        python_path += "\\Scripts\\python"
+        python_path += "/Scripts/python"
     
     print("python path:", python_path)
-    f = open(self.dest+"\\lol.txt", "w")
-    subprocess.call([python_path, "-m", "pip", "install", "-r", self.dest + "\\requirements.txt"])
-    subprocess.call([python_path, "-m", "pip", "freeze"], stdout=f, stderr=f)
+    #f = open(self.dest+"\\lol.txt", "w")
+    subprocess.call([python_path, "-m", "pip", "install", "-r", self.dest + "/requirements.txt"])
+    #subprocess.call([python_path, "-m", "pip", "freeze"], stdout=f, stderr=f)
 
 
 if __name__ == "__main__":
