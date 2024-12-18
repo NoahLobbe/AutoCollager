@@ -464,7 +464,7 @@ class Collager:
         for i in image_files_list:
             print("file selected:", i)
         
-        self.filenames_list = image_files_list
+        self.filenames_list += image_files_list #append to list
 
         print("updaying file list widgets")
         self.updateFileList()
@@ -478,7 +478,7 @@ class Collager:
         for i in files_list:
             print("file dragged and dropped:", i)
 
-        self.filenames_list = files_list
+        self.filenames_list += files_list #append to list
         #print("running collager...")
         #self.runCollager(files_list, True)
         print("updaying file list widgets")
