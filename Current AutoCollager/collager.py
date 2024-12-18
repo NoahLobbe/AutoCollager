@@ -148,6 +148,11 @@ class Collager:
         self.FileMenu.add_separator()
         self.FileMenu.add_command(label="Quit", command=self.quitApp)
 
+        #run menu
+        self.RunMenu = tk.Menu(self.MenuBar, tearoff=0)
+        self.MenuBar.add_cascade(menu=self.RunMenu, label="Run")
+        self.RunMenu.add_command(label="Run with current images", command=self.runCollager)
+
         #update menu
         self.UpdateMenu = tk.Menu(self.MenuBar, tearoff=0)
         self.MenuBar.add_cascade(menu=self.UpdateMenu, label="Update")
