@@ -2,6 +2,7 @@
 
 ## Installation
 Note: dependencies can be seen in `requirements.txt`.
+[file](https://github.com/NoahLobbe/AutoCollager/releases/latest)
 1. Install Python
 2. Download this package
 3. Setup virtual environment
@@ -38,7 +39,7 @@ Really big leap, works a lot better.
 Temporary fix for images that requiring reading EXIF data to orient image properly. Bug was found on Mac.
 Fix was to always rotate the final image. Also, rescaled the image to have a width of 1200px so that the image is a reasonable size (not *cough* 215MB...)
 
-### Version 3 (current)
+### Release v3.0
 
 #### To Do list
 - [x] User able to change file name of image 
@@ -53,10 +54,20 @@ Fix was to always rotate the final image. Also, rescaled the image to have a wid
 - [x] Run button instead of automatically running
 - [x] Make a widget for each filename so that the user can seen them listed
 - [x] Make an updater menubar and script that pulls latest release from Github
-- [ ] Change filename list to a single Text widget with scroll bar so that the App window doesn't get super long
+- [] Change filename list to a single Text widget with scroll bar so that the App window doesn't get super long
 - [ ] Add Button to clear selected files
 - [ ] Change text for file select button to be more descriptive and list acceptable file types
   - [ ] add file type checking so that won't try to use images that PIL can't
 - [ ] File input list. E.g. user can add files one by one if neccessary, which adds a widget with the file name
 - [ ] (Low priority) Figure out how to change task/tool bar icon for program. For Version 2.1 using Apple's Automator to run the program does **NOT** allow `tkinter` to change the icon
 - [ ] Make an installer script so that it downloads and runs everything
+
+### Release v3.1
+Some debugging on Mac
+
+### Release v3.2 
+- [x] Change filename list to a single Text widget with scroll bar so that the App window doesn't get super long
+  - Used Tkinter Listbox and scrollbars (SO COOL!)
+- [x] Add Button to clear selected files
+
+### Current Development
