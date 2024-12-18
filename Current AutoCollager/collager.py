@@ -212,7 +212,7 @@ class Collager:
         self.layout_dict["file list"]["widgets"].append(self.FilesListBox)
         self.layout_dict["file list"]["widgets_grid_params"].append({"row":1, "column":0, "columnspan":self.NUM_COLS, "sticky":"NSEW"})
 
-        ## vertical scroll bar
+        # vertical scroll bar
         self.FileslistVertScrollbar = ttk.Scrollbar(
             master=self.layout_dict["file list"]["frame"],
             orient=tk.VERTICAL,
@@ -222,7 +222,7 @@ class Collager:
         self.layout_dict["file list"]["widgets"].append(self.FileslistVertScrollbar)
         self.layout_dict["file list"]["widgets_grid_params"].append({"row":1, "column":self.NUM_COLS, "sticky":"NS"})
 
-        ## horizontal scroll bar
+        # horizontal scroll bar
         self.FileslistHoriScrollbar = ttk.Scrollbar(
             master=self.layout_dict["file list"]["frame"],
             orient=tk.HORIZONTAL,
@@ -232,7 +232,7 @@ class Collager:
         self.layout_dict["file list"]["widgets"].append(self.FileslistHoriScrollbar)
         self.layout_dict["file list"]["widgets_grid_params"].append({"row":2, "column":0, "columnspan":self.NUM_COLS, "sticky":"NEW"})
 
-        ## clear button
+        # clear button
         self.ClearFilesButton = tk.Button(
             master=self.layout_dict["file list"]["frame"],
             text="Clear files",
@@ -242,24 +242,26 @@ class Collager:
         self.layout_dict["file list"]["widgets"].append(self.ClearFilesButton)
         self.layout_dict["file list"]["widgets_grid_params"].append({"row":3, "column":0, "sticky":"W"})
 
-        ## move up button
+        # move up button
         self.FileUpButton = tk.Button(
             master=self.layout_dict["file list"]["frame"],
-            text="File Up"
+            text="File Up",
+            command=self.moveFileUpList
         )
         self.layout_dict["file list"]["widgets"].append(self.FileUpButton)
         self.layout_dict["file list"]["widgets_grid_params"].append({"row":3, "column":self.NUM_COLS-2, "sticky":"EW"})
 
-        ## move down button
+        # move down button
         self.FileDownButton = tk.Button(
             master=self.layout_dict["file list"]["frame"],
-            text="File Down"
+            text="File Down",
+            command=self.moveFileDownList
         )
         self.layout_dict["file list"]["widgets"].append(self.FileDownButton)
         self.layout_dict["file list"]["widgets_grid_params"].append({"row":3, "column":self.NUM_COLS-1, "sticky":"EW"})
 
 
-        ##run button frame
+        ## run button frame
         self.RunButton = tk.Button(
             master=self.layout_dict["run button"]["frame"],
             text="Run",
@@ -518,9 +520,37 @@ class Collager:
         self.updateFilesList(files_list)
 
 
+    def moveFileInList(self, direction="up"):
+        selection = self.FilesListBox.curselection()
+        if len(selection) != 0:
+            index = selection[0]
+            print(f"i: {selection}, file: {self.filenames_list[index]}")
+
+            if direction == "up":
+                switch_index = index - 1
+            elif direction == "down":
+                switch_index = index + 1
+
+            if (switch_index >= 0) and (switch_index < len(self.filenames_list)):
+                #switch
+                self.filenames_list[switch_index], self.filenames_list[index] = self.filenames_list[index], self.filenames_list[switch_index]
+                self.updateFilesList([]) #not adding any files
+                
+                #make it so that when the user moves it, the selection stays on the same file
+                self.FilesListBox.selection_clear(first=index)
+                self.FilesListBox.selection_set(switch_index)
+                self.FilesListBox.see(switch_index)
+
+    def moveFileUpList(self):
+        self.moveFileInList("up")
+
+    def moveFileDownList(self):
+        self.moveFileInList("down")
+
+
     def getCurrentSelectedFile(self, event):
         #in file list
-        print("current file selected in image list is:", self.FilesListBox.curselection(), len(self.FilesListBox.curselection()), type(self.FilesListBox.curselection()))
+        print("current file selected in image list is:", self.FilesListBox.curselection(), type(self.FilesListBox.curselection()))
         
 
 
