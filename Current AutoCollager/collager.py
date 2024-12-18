@@ -161,14 +161,14 @@ class Collager:
         
 
 
-    def centreWindow(self):
+    def placeWindow(self):
         screen_width = self.Root.winfo_screenwidth()
         screen_height = self.Root.winfo_screenheight()
         win_width = self.Root.winfo_width()
         win_height = self.Root.winfo_height()
 
         x = int((screen_width/2) - (win_width)/2)
-        y = int((screen_height/2) - (win_height)/2)
+        y = int((screen_height/3) - (win_height)/2)
         self.Root.geometry(f"+{x}+{y}")
         self.Root.update()
 
@@ -207,19 +207,56 @@ class Collager:
             listvariable=self.filenamesList_StrVar,
             height=5 # # lines listed prior to being scrolled
             )
+        self.FilesListBox.bind("<<ListboxSelect>>", self.getCurrentSelectedFile)
+        
         self.layout_dict["file list"]["widgets"].append(self.FilesListBox)
         self.layout_dict["file list"]["widgets_grid_params"].append({"row":1, "column":0, "columnspan":self.NUM_COLS, "sticky":"NSEW"})
 
-        ## scroll bar
-        self.Fileslist_Scrollbar = ttk.Scrollbar(
+        ## vertical scroll bar
+        self.FileslistVertScrollbar = ttk.Scrollbar(
             master=self.layout_dict["file list"]["frame"],
             orient=tk.VERTICAL,
             command=self.FilesListBox.yview
         )
-        self.FilesListBox.configure(yscrollcommand=self.Fileslist_Scrollbar.set)
-        self.layout_dict["file list"]["widgets"].append(self.Fileslist_Scrollbar)
+        self.FilesListBox.configure(yscrollcommand=self.FileslistVertScrollbar.set)
+        self.layout_dict["file list"]["widgets"].append(self.FileslistVertScrollbar)
         self.layout_dict["file list"]["widgets_grid_params"].append({"row":1, "column":self.NUM_COLS, "sticky":"NS"})
 
+        ## horizontal scroll bar
+        self.FileslistHoriScrollbar = ttk.Scrollbar(
+            master=self.layout_dict["file list"]["frame"],
+            orient=tk.HORIZONTAL,
+            command=self.FilesListBox.xview
+        )
+        self.FilesListBox.configure(xscrollcommand=self.FileslistHoriScrollbar.set)
+        self.layout_dict["file list"]["widgets"].append(self.FileslistHoriScrollbar)
+        self.layout_dict["file list"]["widgets_grid_params"].append({"row":2, "column":0, "columnspan":self.NUM_COLS, "sticky":"NEW"})
+
+        ## clear button
+        self.ClearFilesButton = tk.Button(
+            master=self.layout_dict["file list"]["frame"],
+            text="Clear files",
+            bg="salmon",
+            command=self.clearFilesList
+        )
+        self.layout_dict["file list"]["widgets"].append(self.ClearFilesButton)
+        self.layout_dict["file list"]["widgets_grid_params"].append({"row":3, "column":0, "sticky":"W"})
+
+        ## move up button
+        self.FileUpButton = tk.Button(
+            master=self.layout_dict["file list"]["frame"],
+            text="File Up"
+        )
+        self.layout_dict["file list"]["widgets"].append(self.FileUpButton)
+        self.layout_dict["file list"]["widgets_grid_params"].append({"row":3, "column":self.NUM_COLS-2, "sticky":"EW"})
+
+        ## move down button
+        self.FileDownButton = tk.Button(
+            master=self.layout_dict["file list"]["frame"],
+            text="File Down"
+        )
+        self.layout_dict["file list"]["widgets"].append(self.FileDownButton)
+        self.layout_dict["file list"]["widgets_grid_params"].append({"row":3, "column":self.NUM_COLS-1, "sticky":"EW"})
 
 
         ##run button frame
@@ -369,7 +406,7 @@ class Collager:
                 widget.grid(**frame_dic["widgets_grid_params"][i],pady = self.PAD)
 
         self.Root.update()
-        self.centreWindow()
+        self.placeWindow()
         self.Root.deiconify()
 
 
@@ -449,33 +486,16 @@ class Collager:
         print("filename is now: ", self.filename)
 
 
-    def updateFileList(self):
-        print("cycling through...")
+    def updateFilesList(self, new_files):
+        for f in new_files:
+            if f not in self.filenames_list:
+                self.filenames_list.append(f)
+        self.filenamesList_StrVar.set(self.filenames_list)
 
-        #clear widgets
-        for widget in self.filenames_widgets_list:
-            widget.destroy()
-
-        #add widgets
-        for i, filepath in enumerate(self.filenames_list):
-            _, filename = os.path.split(filepath)
-            
-            print("\twidget for", filename)
-
-
-            """
-            fileWidget = tk.Entry(
-                    master=self.layout_dict["file list"]["frame"]
-                )
-            fileWidget.configure(disabledbackground="light gray", disabledforeground="black")
-            fileWidget.insert(0, filename)
-            fileWidget.grid(row=i, column=0, columnspan=self.NUM_COLS-1, sticky="WE")
-            fileWidget["state"] = "disabled"
-
-            self.filenames_widgets_list.append(fileWidget)
-            """
-
-        self.Root.update()
+    def clearFilesList(self):
+        print("clearing file list")
+        self.filenames_list = []
+        self.filenamesList_StrVar.set(self.filenames_list)
 
     def getFilesWithDialog(self):
         files_str = filedialog.askopenfilenames(title="Select images")
@@ -484,11 +504,7 @@ class Collager:
         for i in image_files_list:
             print("file selected:", i)
         
-        self.filenames_list += image_files_list #append to list
-        self.filenamesList_StrVar.set(self.filenames_list)
-
-        print("updaying file list widgets")
-        self.updateFileList()
+        self.updateFilesList(image_files_list)
 
     def dragDropFiles(self, event):
         #process drag and drop string
@@ -499,13 +515,14 @@ class Collager:
         for i in files_list:
             print("file dragged and dropped:", i)
 
-        self.filenames_list += files_list #append to list
-        self.filenamesList_StrVar.set(self.filenames_list)
+        self.updateFilesList(files_list)
 
-        #print("running collager...")
-        #self.runCollager(files_list, True)
-        print("updaying file list widgets")
-        self.updateFileList()
+
+    def getCurrentSelectedFile(self, event):
+        #in file list
+        print("current file selected in image list is:", self.FilesListBox.curselection(), len(self.FilesListBox.curselection()), type(self.FilesListBox.curselection()))
+        
+
 
 
     def runCollager(self):
