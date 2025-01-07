@@ -17,6 +17,11 @@
 5. Make/use a quick launcher
     - Mac
       - Automator
+      - `cd Documents/AutoCollager`
+      - `source .venv/bin/activate`
+      - `python main.py`
+      - `source deactivate`
+      - `echo "AutoCollager closed` (not neccessary)
 
 
 ## Versions
