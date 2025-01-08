@@ -4,7 +4,8 @@
 1. Install [Python](https://www.python.org/)
 2. Setup virtual environment in desired location (e.g. Documents or Pictures).
    - Windows
-     - `> py -m venv AutoCollager/.venv`
+     - `cd pathToDestination`
+     - `py -m venv AutoCollager/.venv`
    - Mac
      - `cd pathToDestination`
      - `python3 -m venv AutoCollager/.venv`

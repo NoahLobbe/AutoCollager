@@ -14,6 +14,7 @@ from updater import Updater
 
 
 DEV_MODE = True
+
 BORDER_COLORS_DICT = {
     "white": (255,255,255,255),
     "black": (0,0,0,255),
@@ -27,6 +28,11 @@ BORDER_COLORS_DICT = {
     "transparent": (0,0,0,0)
     }
 BORDER_COLORS_KEYS = list(BORDER_COLORS_DICT.keys())
+
+SIZE_PRESET_DICT = {
+    "facebook": (1200, 630),
+    "3k wide": (3000,3000)
+}
 
 
 class Collager:
@@ -44,7 +50,9 @@ class Collager:
 
         #variables
         self.PAD = 5
-        self.NUM_COLS = 5
+        self.NUM_COLS = 6
+        self.SPINBOX_WIDTH = 5
+        self.COMBOBOX_WIDTH = 10
         self.BORDER_THICKNESS_RANGE = [0,50]
         self.DISP_TEXT_LENGTH = 100
         self.FILE_FORMAT= ".png"
@@ -56,7 +64,7 @@ class Collager:
         self.filenames_widgets_list = []
         self.file_list_frame_parent_widget_index = None
         
-        self.outerBorderOn_BoolVar = tk.BooleanVar(value=True)
+        self.outerBorderOn_BoolVar = tk.BooleanVar(value=False)
         self.filename_StrVar = tk.StringVar(value = self.filename_default)
         self.saveDir_StrVar = tk.StringVar(value = self.save_directory)
         self.filenamesList_StrVar = tk.StringVar(value=self.filenames_list)
@@ -105,24 +113,25 @@ class Collager:
              },
             "top options":{
              "frame": tk.Frame(master=self.Root),
-             "frame_grid":{"row":3, "column":0, "columnspan":2, "sticky":"EW", "padx":self.PAD, "pady":self.PAD},
+             "frame_grid":{"row":3, "column":0, "columnspan":self.NUM_COLS, "sticky":"EW", "padx":self.PAD, "pady":self.PAD},
              "widgets": [],
              "widgets_grid_params":[]
              }
              ,
             "left options":{
              "frame": tk.Frame(master=self.Root),
-             "frame_grid":{"row":4, "column":0, "sticky":"NW", "padx":self.PAD, "pady":self.PAD},
+             "frame_grid":{"row":4, "column":0, "sticky":"NW", "padx":2*self.PAD, "pady":self.PAD},
              "widgets": [],
              "widgets_grid_params":[]
              },
             "right options":{
              "frame": tk.Frame(master=self.Root),
-             "frame_grid":{"row":4, "column":1, "sticky":"NE", "padx":self.PAD, "pady":self.PAD},
+             "frame_grid":{"row":4, "column":1, "sticky":"NE", "padx":2*self.PAD, "pady":self.PAD},
              "widgets": [],
              "widgets_grid_params":[]
              }
         }
+        
         
         self.makeMenubar()
         self.makeWidgets()
@@ -240,7 +249,7 @@ class Collager:
             command=self.clearFilesList
         )
         self.layout_dict["file list"]["widgets"].append(self.ClearFilesButton)
-        self.layout_dict["file list"]["widgets_grid_params"].append({"row":3, "column":0, "sticky":"W"})
+        self.layout_dict["file list"]["widgets_grid_params"].append({"row":3, "column":0, "sticky":"EW"})
 
         #remove selected button
         self.RemoveSelectedFileButton = tk.Button(
@@ -279,11 +288,12 @@ class Collager:
             command=self.runCollager
         )
         self.layout_dict["run button"]["widgets"].append(self.RunButton)
-        self.layout_dict["run button"]["widgets_grid_params"].append({"row":4, "column":2, "columnspan":1, "sticky":"EW"})
+        self.layout_dict["run button"]["widgets_grid_params"].append({"row":4, "column":round(self.NUM_COLS/2)-1, "columnspan":2, "sticky":"EW"})
 
 
-        ##frame 
-        #options
+
+        ### left options frame
+        #separator/title
         self.OptionsSeparator = ttk.Separator(master=self.layout_dict["top options"]["frame"], orient=tk.HORIZONTAL)   
         self.OptionsLabel = tk.Label(
             master=self.layout_dict["top options"]["frame"],
@@ -297,31 +307,31 @@ class Collager:
             )
 
 
-        #filename
-        self.FilenameLabel = tk.Label(master=self.layout_dict["top options"]["frame"], text="Image name ")
-        self.FilenameEntry = tk.Entry(master=self.layout_dict["top options"]["frame"], textvariable=self.filename_StrVar)
+        # filename
+        self.FilenameLabel = tk.Label(master=self.layout_dict["left options"]["frame"], text="Image name ")
+        self.FilenameEntry = tk.Entry(master=self.layout_dict["left options"]["frame"], textvariable=self.filename_StrVar)
         
-        self.layout_dict["top options"]["widgets"].extend([self.FilenameLabel, self.FilenameEntry])
-        self.layout_dict["top options"]["widgets_grid_params"].extend(
-            [{"row":2, "column":0, "sticky":"E"},
-             {"row":2, "column":1, "sticky":"W"}]
-            )
-
-        #save directory
-        self.SaveDirLabel = tk.Label(master=self.layout_dict["top options"]["frame"], text="Save to ")
-        self.SaveDirEntry = tk.Entry(master=self.layout_dict["top options"]["frame"], textvariable=self.saveDir_StrVar)
-        self.SaveDirDialogButton = tk.Button(master=self.layout_dict["top options"]["frame"], text="browse", command=self.updateSaveDirDialog)
-
-        self.layout_dict["top options"]["widgets"].extend([self.SaveDirLabel, self.SaveDirEntry, self.SaveDirDialogButton])
-        self.layout_dict["top options"]["widgets_grid_params"].extend(
-            [{"row":3, "column":0, "columnspan":1, "sticky":"E"},
-             {"row":3, "column":1, "columnspan":1, "sticky":"EW"},
-             {"row":3, "column":2, "columnspan":1, "sticky":"W"}]
+        self.layout_dict["left options"]["widgets"].extend([self.FilenameLabel, self.FilenameEntry])
+        self.layout_dict["left options"]["widgets_grid_params"].extend(
+            [{"row":1, "column":0, "sticky":"E"},
+             {"row":1, "column":1, "sticky":"W"}]
             )
         
 
-        ##frame 
-        #auto open file
+        # save directory
+        self.SaveDirLabel = tk.Label(master=self.layout_dict["left options"]["frame"], text="Save to ")
+        self.SaveDirEntry = tk.Entry(master=self.layout_dict["left options"]["frame"], textvariable=self.saveDir_StrVar)
+        self.SaveDirDialogButton = tk.Button(master=self.layout_dict["left options"]["frame"], text="browse", command=self.updateSaveDirDialog)
+
+        self.layout_dict["left options"]["widgets"].extend([self.SaveDirLabel, self.SaveDirEntry, self.SaveDirDialogButton])
+        self.layout_dict["left options"]["widgets_grid_params"].extend(
+            [{"row":2, "column":0, "columnspan":1, "sticky":"E"},
+             {"row":2, "column":1, "columnspan":1, "sticky":"EW"},
+             {"row":2, "column":2, "columnspan":1, "sticky":"W"}]
+            )
+    
+
+        # auto open file
         self.AutoOpenFilelabel = tk.Label(master=self.layout_dict["left options"]["frame"], text="Open image afterwards")
         self.AutoOpenFileCheckbutton = tk.Checkbutton(
             master=self.layout_dict["left options"]["frame"],
@@ -331,11 +341,12 @@ class Collager:
             )
         self.layout_dict["left options"]["widgets"].extend([self.AutoOpenFilelabel, self.AutoOpenFileCheckbutton])
         self.layout_dict["left options"]["widgets_grid_params"].extend(
-            [{"row":4, "column":1, "columnspan":1, "sticky":"E"},
-             {"row":4, "column":2, "columnspan":1, "sticky":"W"}]
+            [{"row":3, "column":1, "columnspan":1, "sticky":"E"},
+             {"row":3, "column":2, "columnspan":1, "sticky":"W"}]
             )
         
-        #auto orientation (EXIF)
+
+        # auto orientation (EXIF)
         self.AutoOrientlabel = tk.Label(master=self.layout_dict["left options"]["frame"], text="Auto orient images (recommended)")
         self.AutoOrientCheckbutton = tk.Checkbutton(
             master=self.layout_dict["left options"]["frame"],
@@ -345,12 +356,126 @@ class Collager:
             )
         self.layout_dict["left options"]["widgets"].extend([self.AutoOrientlabel, self.AutoOrientCheckbutton])
         self.layout_dict["left options"]["widgets_grid_params"].extend(
-            [{"row":5, "column":1, "columnspan":1, "sticky":"E"},
-             {"row":5, "column":2, "columnspan":1, "sticky":"W"}]
+            [{"row":4, "column":1, "columnspan":1, "sticky":"E"},
+             {"row":4, "column":2, "columnspan":1, "sticky":"W"}]
+            )
+        
+
+
+        ##right options
+        ## separator
+        self.CentreSeparator = ttk.Separator(master=self.layout_dict["right options"]["frame"], orient=tk.VERTICAL)
+        self.layout_dict["right options"]["widgets"].append(self.CentreSeparator)
+        self.layout_dict["right options"]["widgets_grid_params"].append(
+            {"row":0, "column":0, "rowspan":9, "sticky":"NS", "padx":(0,2*self.PAD)}
+            )
+    
+        # Set rows 
+        self.SetRowsLabel = tk.Label(master=self.layout_dict["right options"]["frame"], text="Rows ")        
+        self.SetRowsSpinBox = ttk.Spinbox(
+            master=self.layout_dict["right options"]["frame"],
+            from_=1,
+            to_=100,
+            width=5
+            )
+        self.SetRowsSpinBox.insert(0,1)
+
+        self.layout_dict["right options"]["widgets"].extend([self.SetRowsLabel, self.SetRowsSpinBox])
+        self.layout_dict["right options"]["widgets_grid_params"].extend(
+            [{"row":0, "column":1, "columnspan":1, "sticky":"E"},
+             {"row":0, "column":3, "columnspan":1, "sticky":"W"}]
+            )
+
+        # set cols
+        self.SetColumnsLabel = tk.Label(master=self.layout_dict["right options"]["frame"], text="Columns ")        
+        self.SetColumnsSpinBox = ttk.Spinbox(
+            master=self.layout_dict["right options"]["frame"],
+            from_=1,
+            to_=100,
+            width=5
+            )
+        self.SetColumnsSpinBox.insert(0,1)
+
+        self.layout_dict["right options"]["widgets"].extend([self.SetColumnsLabel, self.SetColumnsSpinBox])
+        self.layout_dict["right options"]["widgets_grid_params"].extend(
+            [{"row":1, "column":1, "columnspan":1, "sticky":"E"},
+             {"row":1, "column":3, "columnspan":1, "sticky":"W"}]
+            )
+        
+        ## Auto Size button
+        self.AutoLayoutButton = tk.Button(
+            master=self.layout_dict["right options"]["frame"],
+            text="Auto layout",
+        )
+        self.layout_dict["right options"]["widgets"].append(self.AutoLayoutButton)
+        self.layout_dict["right options"]["widgets_grid_params"].append(
+            {"row":0, "column":4, "rowspan":2, "sticky":"NS"}
             )
 
 
-        ##frame 
+
+
+        #output size limit -------------------------------------------------------------------------------------------------------------------
+
+        self.OutputSizeLabel = tk.Label(master=self.layout_dict["right options"]["frame"], text="Output \nimage size ")
+        self.layout_dict["right options"]["widgets"].extend([self.OutputSizeLabel])
+        self.layout_dict["right options"]["widgets_grid_params"].extend(
+            [{"row":2, "column":1, "rowspan":3, "sticky":"E"}]
+            )
+        
+        self.OutputSizeSeparator = ttk.Separator(master=self.layout_dict["right options"]["frame"], orient=tk.VERTICAL)
+        self.layout_dict["right options"]["widgets"].append(self.OutputSizeSeparator)
+        self.layout_dict["right options"]["widgets_grid_params"].append(
+            {"row":2, "column":2, "rowspan":3, "sticky":"NS"}
+            )
+        
+        self.SizeXLabel = tk.Label(master=self.layout_dict["right options"]["frame"], text="width (px) ")
+        self.SizeXSpinBox = ttk.Spinbox(
+            master=self.layout_dict["right options"]["frame"],
+            from_=0,
+            to_=1,
+            width=5
+            )
+        self.SizeXSpinBox.insert(0,1)
+
+        self.layout_dict["right options"]["widgets"].extend([self.SizeXLabel, self.SizeXSpinBox])
+        self.layout_dict["right options"]["widgets_grid_params"].extend(
+            [{"row":2, "column":3, "sticky":"E"},
+             {"row":2, "column":4, "sticky":"W"}]
+            )
+        
+        self.SizeYLabel = tk.Label(master=self.layout_dict["right options"]["frame"], text="height (px) ")
+        self.SizeYSpinBox = ttk.Spinbox(
+            master=self.layout_dict["right options"]["frame"],
+            from_=0,
+            to_=1,
+            width=5
+            )
+        self.SizeYSpinBox.insert(0,1)
+
+        self.layout_dict["right options"]["widgets"].extend([self.SizeYLabel, self.SizeYSpinBox])
+        self.layout_dict["right options"]["widgets_grid_params"].extend(
+            [{"row":3, "column":3, "sticky":"E"},
+             {"row":3, "column":4, "sticky":"W"}]
+            )
+        
+
+        self.SizePresetLabel = tk.Label(master=self.layout_dict["right options"]["frame"], text="Size Presets: ")
+        self.SizePresetCombobox = ttk.Combobox(
+            master=self.layout_dict["right options"]["frame"],
+            width=10,
+            values=BORDER_COLORS_KEYS
+            )
+        self.SizePresetCombobox.current(0)
+
+        self.layout_dict["right options"]["widgets"].extend([self.SizePresetLabel, self.SizePresetCombobox])
+        self.layout_dict["right options"]["widgets_grid_params"].extend(
+            [{"row":4, "column":3, "sticky":"E"},
+             {"row":4, "column":4, "sticky":"W"}]
+            )
+        
+
+
         #border thickness
         self.BorderthicknessLabel = tk.Label(master=self.layout_dict["right options"]["frame"], text="Border thickness ")        
         self.BorderthicknessSpinBox = ttk.Spinbox(
@@ -363,23 +488,23 @@ class Collager:
 
         self.layout_dict["right options"]["widgets"].extend([self.BorderthicknessLabel, self.BorderthicknessSpinBox])
         self.layout_dict["right options"]["widgets_grid_params"].extend(
-            [{"row":7, "column":1, "columnspan":1, "sticky":"E"},
-             {"row":7, "column":2, "columnspan":1, "sticky":"W"}]
+            [{"row":5, "column":1, "columnspan":1, "sticky":"E"},
+             {"row":5, "column":3, "columnspan":1, "sticky":"W"}]
             )
 
         #border color
         self.BordercolorLabel = tk.Label(master=self.layout_dict["right options"]["frame"], text="Border color ")
         self.BordercolorCombobox = ttk.Combobox(
             master=self.layout_dict["right options"]["frame"],
-            width=15,
+            width=10,
             values=BORDER_COLORS_KEYS
             )
         self.BordercolorCombobox.current(0)
 
         self.layout_dict["right options"]["widgets"].extend([self.BordercolorLabel, self.BordercolorCombobox])
         self.layout_dict["right options"]["widgets_grid_params"].extend(
-            [{"row":8, "column":1, "columnspan":1, "sticky":"E"},
-             {"row":8, "column":2, "columnspan":1, "sticky":"W"}]
+            [{"row":6, "column":1, "columnspan":1, "sticky":"E"},
+             {"row":6, "column":3, "columnspan":2, "sticky":"W"}]
             )
 
         #outer border
@@ -394,8 +519,8 @@ class Collager:
         
         self.layout_dict["right options"]["widgets"].extend([self.BorderOuterlabel, self.BorderOuterCheckbutton])
         self.layout_dict["right options"]["widgets_grid_params"].extend(
-            [{"row":9, "column":1, "columnspan":1, "sticky":"E"},
-             {"row":9, "column":2, "columnspan":1, "sticky":"W"}]
+            [{"row":7, "column":1, "columnspan":1, "sticky":"E"},
+             {"row":7, "column":3, "columnspan":1, "sticky":"W"}]
             )
 
 
