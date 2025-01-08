@@ -4,9 +4,10 @@
 1. Install [Python](https://www.python.org/)
 2. Setup virtual environment in desired location.
    - Windows
-     - `> py -m venv .venv`
+     - `> py -m venv AutoCollager/.venv`
    - Mac
-     - `$ python3 -m venv .venv`
+     - `cd pathToDestination`
+     - `python3 -m venv AutoCollager/.venv`
 3. Download [`updater.py`](https://github.com/NoahLobbe/AutoCollager/releases/latest/download/updater.py)
 4. Run `updater.py` using IDLE or from terminal. Automatically installs `requests` if not in main python installation, and then installs `requirements.txt` in virtual environment (`.venv`)
     - Windows Command line
@@ -16,12 +17,13 @@
       - `python3 updater.py`
 5. Make/use a quick launcher
     - Mac
-      - Automator
-      - `cd Documents/AutoCollager`
-      - `source .venv/bin/activate`
-      - `python main.py`
-      - `source deactivate`
-      - `echo "AutoCollager closed` (not neccessary)
+      - Automator   
+         ```
+         cd  pathToDestination/AutoCollager
+         source .venv/bin/activate
+         python main.py
+         deactivate
+         ```
 
 
 ## Versions
