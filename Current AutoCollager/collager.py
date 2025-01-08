@@ -13,7 +13,7 @@ from merger import Merger
 from updater import Updater
 
 
-DEV_MODE = False
+DEV_MODE = True
 BORDER_COLORS_DICT = {
     "white": (255,255,255,255),
     "black": (0,0,0,255),
@@ -232,15 +232,25 @@ class Collager:
         self.layout_dict["file list"]["widgets"].append(self.FileslistHoriScrollbar)
         self.layout_dict["file list"]["widgets_grid_params"].append({"row":2, "column":0, "columnspan":self.NUM_COLS, "sticky":"NEW"})
 
-        # clear button
+        # clear all button
         self.ClearFilesButton = tk.Button(
             master=self.layout_dict["file list"]["frame"],
-            text="Clear files",
+            text="Remove all",
             bg="salmon",
             command=self.clearFilesList
         )
         self.layout_dict["file list"]["widgets"].append(self.ClearFilesButton)
         self.layout_dict["file list"]["widgets_grid_params"].append({"row":3, "column":0, "sticky":"W"})
+
+        #remove selected button
+        self.RemoveSelectedFileButton = tk.Button(
+            master=self.layout_dict["file list"]["frame"],
+            text="Remove selected",
+            bg="salmon",
+            command=self.clearSelectedFile
+        )
+        self.layout_dict["file list"]["widgets"].append(self.RemoveSelectedFileButton)
+        self.layout_dict["file list"]["widgets_grid_params"].append({"row":3, "column":1, "sticky":"W"})
 
         # move up button
         self.FileUpButton = tk.Button(
@@ -499,6 +509,13 @@ class Collager:
         self.filenames_list = []
         self.filenamesList_StrVar.set(self.filenames_list)
 
+    def clearSelectedFile(self):
+        print("clearing selected file")
+        selected = self.getCurrentSelectedFile()
+        print("selected:", selected)
+        self.filenames_list.pop(selected[0])
+        self.filenamesList_StrVar.set(self.filenames_list)
+
     def getFilesWithDialog(self):
         files_str = filedialog.askopenfilenames(title="Select images")
         image_files_list = self.Root.tk.splitlist(files_str)
@@ -548,9 +565,10 @@ class Collager:
         self.moveFileInList("down")
 
 
-    def getCurrentSelectedFile(self, event):
+    def getCurrentSelectedFile(self, event=None):
         #in file list
-        print("current file selected in image list is:", self.FilesListBox.curselection(), type(self.FilesListBox.curselection()))
+        print("current file selected in image list is:", self.FilesListBox.curselection())
+        return self.FilesListBox.curselection()
         
 
 
