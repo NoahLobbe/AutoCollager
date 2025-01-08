@@ -13,7 +13,9 @@ class Merger:
         self.final_size = final_img_size
         self.final_is_width_priority = is_width_priority
         
-        
+    def setFinalSize(self, size):
+        self.final_size = size
+        print("final size is now:",  self.final_size)
 
     def openImages(self, img_filename_list, exif_fix=True):
         obj_list = []

@@ -416,9 +416,7 @@ class Collager:
             )
 
 
-
-
-        #output size limit -------------------------------------------------------------------------------------------------------------------
+        #output size limit
 
         self.OutputSizeLabel = tk.Label(master=self.layout_dict["right options"]["frame"], text="Output \nimage size ")
         self.layout_dict["right options"]["widgets"].extend([self.OutputSizeLabel])
@@ -439,7 +437,7 @@ class Collager:
             to_=MAX_IMAGE_DIMENSION,
             width=self.SPINBOX_WIDTH
             )
-        self.SizeXSpinBox.insert(0,1)
+        self.SizeXSpinBox.insert(0, self.file_size[0])
 
         self.layout_dict["right options"]["widgets"].extend([self.SizeXLabel, self.SizeXSpinBox])
         self.layout_dict["right options"]["widgets_grid_params"].extend(
@@ -454,7 +452,7 @@ class Collager:
             to_=MAX_IMAGE_DIMENSION,
             width=self.SPINBOX_WIDTH
             )
-        self.SizeYSpinBox.insert(0,1)
+        self.SizeYSpinBox.insert(0, self.file_size[1])
 
         self.layout_dict["right options"]["widgets"].extend([self.SizeYLabel, self.SizeYSpinBox])
         self.layout_dict["right options"]["widgets_grid_params"].extend(
@@ -471,6 +469,7 @@ class Collager:
             values=SIZE_PRESET_KEYS
             )
         self.SizePresetCombobox.current(0)
+        self.SizePresetCombobox.bind("<<ComboboxSelected>>", self.updateImageSize)
 
         self.layout_dict["right options"]["widgets"].extend([self.SizePresetLabel, self.SizePresetCombobox])
         self.layout_dict["right options"]["widgets_grid_params"].extend(
@@ -635,6 +634,8 @@ class Collager:
 
         if rows.isdigit() and cols.isdigit():
             return int(rows), int(cols)
+        else:
+            return self.autoLayout()
 
 
     def autoLayout(self):
@@ -644,7 +645,28 @@ class Collager:
 
         self.SetRowsSpinBox.set(r)
         self.SetColumnsSpinBox.set(c)
+        
+        return r, c
+        
 
+    def getImageSize(self):
+        x = self.SizeXSpinBox.get()
+        y = self.SizeYSpinBox.get()
+
+        if x.isdigit() and y.isdigit():
+            return int(x), int(y)
+        else:
+            return self.file_size
+
+    def updateImageSize(self, event=None):
+        preset = self.SizePresetCombobox.get()
+        self.file_size = SIZE_PRESET_DICT[preset]
+
+        self.SizeXSpinBox.set(self.file_size[0])
+        self.SizeYSpinBox.set(self.file_size[1])
+
+        print("updated image size,", self.file_size)
+        return self.file_size
 
 
     #-- file list functions
@@ -668,6 +690,7 @@ class Collager:
             print("file selected:", i)
         
         self.updateFilesList(image_files_list)
+        self.autoLayout()
 
     def dragDropFiles(self, event):
         #process drag and drop string
@@ -736,10 +759,10 @@ class Collager:
         is_border = self.outerBorderOn_BoolVar.get() #self.updateBorderOutside()
         outer_border_thickness = is_border *  border_thickness
 
-
+        self.file_size = self.getImageSize()
+        self.Merger.setFinalSize(self.file_size)
         auto_orient = self.autoOrient_BoolVar.get()
         layout = self.getLayout()
-        print("raw layout:", layout)
 
         '''
         #get images
