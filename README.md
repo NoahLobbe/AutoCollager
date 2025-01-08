@@ -2,11 +2,12 @@
 
 ## Installation
 1. Install [Python](https://www.python.org/)
-2. Setup virtual environment in desired location.
+2. Setup virtual environment in desired location (e.g. Documents or Pictures).
    - Windows
-     - `> py -m venv .venv`
+     - `> py -m venv AutoCollager/.venv`
    - Mac
-     - `$ python3 -m venv .venv`
+     - `cd pathToDestination`
+     - `python3 -m venv AutoCollager/.venv`
 3. Download [`updater.py`](https://github.com/NoahLobbe/AutoCollager/releases/latest/download/updater.py)
 4. Run `updater.py` using IDLE or from terminal. Automatically installs `requests` if not in main python installation, and then installs `requirements.txt` in virtual environment (`.venv`)
     - Windows Command line
@@ -15,8 +16,16 @@
       - Will probably have some popups asking for permissions to folders or use of terminal
       - `python3 updater.py`
 5. Make/use a quick launcher
-    - Mac
-      - Automator
+    - Mac (Automator)
+      - `New Document`
+      - drag `Run Script` over
+      - remove any existing lines, and replace with the following:
+         ```
+         cd  pathToDestination/AutoCollager
+         source .venv/bin/activate
+         python main.py
+         deactivate
+         ```
 
 
 ## Versions
