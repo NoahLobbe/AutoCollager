@@ -115,10 +115,10 @@ class Merger:
         return (rows, cols)
 
 
-    def mergeImages(self, img_obj_list, filename, border_color, border_thickness, outer_border_thickness):
+    def mergeImages(self, img_obj_list, layout, filename, border_color, border_thickness, outer_border_thickness):
         #variables
         num_images = len(img_obj_list)
-        num_rows, num_cols = self.determineLayout(num_images)
+        num_rows, num_cols = layout #self.determineLayout(num_images)
 
 
         #calculate final dimensions and make adjustments

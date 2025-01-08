@@ -29,10 +29,16 @@ BORDER_COLORS_DICT = {
     }
 BORDER_COLORS_KEYS = list(BORDER_COLORS_DICT.keys())
 
+MAX_IMAGE_DIMENSION = 5000
 SIZE_PRESET_DICT = {
     "facebook": (1200, 630),
-    "3k wide": (3000,3000)
+    "3000 wide": (3000,3000),
+    "720p": (1280, 720),
+    "1080p": (1920, 1080),
+    "1440p":(2560,1440),
+    "3K": (3072, 1620)
 }
+SIZE_PRESET_KEYS = list(SIZE_PRESET_DICT.keys())
 
 
 class Collager:
@@ -46,23 +52,28 @@ class Collager:
         self.Root.resizable(False, False)
         self.Root.withdraw() # so that adjustments can be made subtley
 
-        self.Merger = Merger((1200,630), True)
+        
 
         #variables
         self.PAD = 5
         self.NUM_COLS = 6
+        self.MAX_NUM_COLS = 50
+        self.MAX_NUM_ROWS = 50 
         self.SPINBOX_WIDTH = 5
         self.COMBOBOX_WIDTH = 10
         self.BORDER_THICKNESS_RANGE = [0,50]
         self.DISP_TEXT_LENGTH = 100
         self.FILE_FORMAT= ".png"
+
+        self.file_size = SIZE_PRESET_DICT[SIZE_PRESET_KEYS[0]]
+        self.Merger = Merger(self.file_size, True)
         self.filename_default = datetime.today().strftime('%Y-%m-%d %I.%M.%S%p') + " merged"
         self.filename = ""
         self.file_count = 0
         self.save_directory = os.path.join(Path.home(), "Downloads")
         self.filenames_list = []
         self.filenames_widgets_list = []
-        self.file_list_frame_parent_widget_index = None
+        
         
         self.outerBorderOn_BoolVar = tk.BooleanVar(value=False)
         self.filename_StrVar = tk.StringVar(value = self.filename_default)
@@ -73,10 +84,6 @@ class Collager:
 
         self.filename_StrVar.trace_add("write", self.updateFilename)
         self.saveDir_StrVar.trace_add("write", self.updateSaveDir)
-
-        self.widget_list = []
-        self.widget_packing_list = []
-
 
 
         """
@@ -141,11 +148,8 @@ class Collager:
         self.updateSaveDir()
 
     
-    def quitApp(self):
-        print("quiting " + self.Root.title())
-        self.Root.destroy()
-        exit()
 
+    #-- Tkinter/GUI functions
 
     def makeMenubar(self):
         self.MenuBar = tk.Menu(self.Root)
@@ -172,12 +176,10 @@ class Collager:
 
     def placeWindow(self):
         screen_width = self.Root.winfo_screenwidth()
-        screen_height = self.Root.winfo_screenheight()
         win_width = self.Root.winfo_width()
-        win_height = self.Root.winfo_height()
 
         x = int((screen_width/2) - (win_width)/2)
-        y = int((screen_height/3) - (win_height)/2)
+        y = 10 
         self.Root.geometry(f"+{x}+{y}")
         self.Root.update()
 
@@ -375,8 +377,8 @@ class Collager:
         self.SetRowsSpinBox = ttk.Spinbox(
             master=self.layout_dict["right options"]["frame"],
             from_=1,
-            to_=100,
-            width=5
+            to_=self.MAX_NUM_ROWS,
+            width=self.SPINBOX_WIDTH
             )
         self.SetRowsSpinBox.insert(0,1)
 
@@ -391,8 +393,8 @@ class Collager:
         self.SetColumnsSpinBox = ttk.Spinbox(
             master=self.layout_dict["right options"]["frame"],
             from_=1,
-            to_=100,
-            width=5
+            to_=self.MAX_NUM_COLS,
+            width=self.SPINBOX_WIDTH
             )
         self.SetColumnsSpinBox.insert(0,1)
 
@@ -402,10 +404,11 @@ class Collager:
              {"row":1, "column":3, "columnspan":1, "sticky":"W"}]
             )
         
-        ## Auto Size button
+        ## Auto layout button
         self.AutoLayoutButton = tk.Button(
             master=self.layout_dict["right options"]["frame"],
             text="Auto layout",
+            command=self.autoLayout
         )
         self.layout_dict["right options"]["widgets"].append(self.AutoLayoutButton)
         self.layout_dict["right options"]["widgets_grid_params"].append(
@@ -432,9 +435,9 @@ class Collager:
         self.SizeXLabel = tk.Label(master=self.layout_dict["right options"]["frame"], text="width (px) ")
         self.SizeXSpinBox = ttk.Spinbox(
             master=self.layout_dict["right options"]["frame"],
-            from_=0,
-            to_=1,
-            width=5
+            from_=1,
+            to_=MAX_IMAGE_DIMENSION,
+            width=self.SPINBOX_WIDTH
             )
         self.SizeXSpinBox.insert(0,1)
 
@@ -447,9 +450,9 @@ class Collager:
         self.SizeYLabel = tk.Label(master=self.layout_dict["right options"]["frame"], text="height (px) ")
         self.SizeYSpinBox = ttk.Spinbox(
             master=self.layout_dict["right options"]["frame"],
-            from_=0,
-            to_=1,
-            width=5
+            from_=1,
+            to_=MAX_IMAGE_DIMENSION,
+            width=self.SPINBOX_WIDTH
             )
         self.SizeYSpinBox.insert(0,1)
 
@@ -460,11 +463,12 @@ class Collager:
             )
         
 
+        # size presets
         self.SizePresetLabel = tk.Label(master=self.layout_dict["right options"]["frame"], text="Size Presets: ")
         self.SizePresetCombobox = ttk.Combobox(
             master=self.layout_dict["right options"]["frame"],
-            width=10,
-            values=BORDER_COLORS_KEYS
+            width=self.COMBOBOX_WIDTH,
+            values=SIZE_PRESET_KEYS
             )
         self.SizePresetCombobox.current(0)
 
@@ -482,7 +486,7 @@ class Collager:
             master=self.layout_dict["right options"]["frame"],
             from_=self.BORDER_THICKNESS_RANGE[0],
             to=self.BORDER_THICKNESS_RANGE[1],
-            width=5
+            width=self.SPINBOX_WIDTH
             )
         self.BorderthicknessSpinBox.insert(0,10)
 
@@ -496,7 +500,7 @@ class Collager:
         self.BordercolorLabel = tk.Label(master=self.layout_dict["right options"]["frame"], text="Border color ")
         self.BordercolorCombobox = ttk.Combobox(
             master=self.layout_dict["right options"]["frame"],
-            width=10,
+            width=self.COMBOBOX_WIDTH,
             values=BORDER_COLORS_KEYS
             )
         self.BordercolorCombobox.current(0)
@@ -547,6 +551,9 @@ class Collager:
         self.Root.deiconify()
 
 
+
+    #-- Sub process functions
+
     def getUpdate(self):
         msg_box_answer = tk.messagebox.askyesno(
             master=self.Root,
@@ -569,9 +576,8 @@ class Collager:
             self.quitApp()
 
 
-    
 
-
+    #-- Customization Variables
 
     def updateBorderColor(self):
         option_menu_value = self.BordercolorCombobox.get()
@@ -623,22 +629,35 @@ class Collager:
         print("filename is now: ", self.filename)
 
 
+    def getLayout(self):
+        rows = self.SetRowsSpinBox.get()
+        cols = self.SetColumnsSpinBox.get()
+
+        if rows.isdigit() and cols.isdigit():
+            return int(rows), int(cols)
+
+
+    def autoLayout(self):
+        num_images = len(self.filenames_list)
+        r, c = self.Merger.determineLayout(num_images)
+        print("autolayout:", r, c)
+
+        self.SetRowsSpinBox.set(r)
+        self.SetColumnsSpinBox.set(c)
+
+
+
+    #-- file list functions
+
+    def getCurrentSelectedFile(self, event=None):
+        file = self.FilesListBox.curselection()
+        print("current file selected in image list is:", file)
+        return file
+
     def updateFilesList(self, new_files):
         for f in new_files:
             if f not in self.filenames_list:
                 self.filenames_list.append(f)
-        self.filenamesList_StrVar.set(self.filenames_list)
-
-    def clearFilesList(self):
-        print("clearing file list")
-        self.filenames_list = []
-        self.filenamesList_StrVar.set(self.filenames_list)
-
-    def clearSelectedFile(self):
-        print("clearing selected file")
-        selected = self.getCurrentSelectedFile()
-        print("selected:", selected)
-        self.filenames_list.pop(selected[0])
         self.filenamesList_StrVar.set(self.filenames_list)
 
     def getFilesWithDialog(self):
@@ -661,6 +680,17 @@ class Collager:
 
         self.updateFilesList(files_list)
 
+    def clearFilesList(self):
+        print("clearing file list")
+        self.filenames_list = []
+        self.filenamesList_StrVar.set(self.filenames_list)
+
+    def clearSelectedFile(self):
+        print("clearing selected file")
+        selected = self.getCurrentSelectedFile()
+        print("selected:", selected)
+        self.filenames_list.pop(selected[0])
+        self.filenamesList_StrVar.set(self.filenames_list)
 
     def moveFileInList(self, direction="up"):
         selection = self.FilesListBox.curselection()
@@ -690,13 +720,13 @@ class Collager:
         self.moveFileInList("down")
 
 
-    def getCurrentSelectedFile(self, event=None):
-        #in file list
-        print("current file selected in image list is:", self.FilesListBox.curselection())
-        return self.FilesListBox.curselection()
-        
+    
+    #-- Program Operation functions
 
-
+    def quitApp(self):
+        print("quiting " + self.Root.title())
+        self.Root.destroy()
+        exit()
 
     def runCollager(self):
 
@@ -705,7 +735,11 @@ class Collager:
         border_thickness = self.updateBorderThickness()
         is_border = self.outerBorderOn_BoolVar.get() #self.updateBorderOutside()
         outer_border_thickness = is_border *  border_thickness
+
+
         auto_orient = self.autoOrient_BoolVar.get()
+        layout = self.getLayout()
+        print("raw layout:", layout)
 
         '''
         #get images
@@ -732,7 +766,7 @@ class Collager:
             filename = self.save_directory +  "/" + self.filename + self.FILE_FORMAT
             print("filename:", filename)
 
-            self.Merger.mergeImages(img_obj_list, filename, color, border_thickness, outer_border_thickness)
+            self.Merger.mergeImages(img_obj_list, layout, filename, color, border_thickness, outer_border_thickness)
 
             self.Merger.closeImages(img_obj_list)
 
@@ -747,7 +781,5 @@ class Collager:
             print("no images selected/cancelled")
 
 
-
     def run(self):
-        
         self.Root.mainloop()
